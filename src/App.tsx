@@ -116,6 +116,16 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   zIndex: 1,
+  '@media (max-aspect-ratio: 10/7)': {
+    width: 'calc(58vh * 10 / 7)',
+    bottom: 'calc(calc(57.37vh * 10 / 7) - 100vh)',
+    height: '45vh',
+  },
+  '@media (min-aspect-ratio: 10/7)': {
+    width: '58vw',
+    bottom: 'calc(calc(57.37vh * 10 / 7) - 100vh)',
+    height: 'calc(45vw * 7 / 10)',
+  },
 }));
 
 const ScrollableContent = styled('div')({
