@@ -104,80 +104,19 @@ const AppContainer = styled('div')({
 });
 
 const LeaderboardContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  maxWidth: '1000px',
-  margin: '0 auto',
+  margin: 'auto',
+  paddingLeft: '2vw',
+  position: 'relative',
   backgroundColor: 'white',
   borderRadius: '8px',
   boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
   overflow: 'hidden',
   padding: '20px',
   boxSizing: 'border-box',
-  height: 'calc(6 * 64px + 48px + 40px)',
   display: 'flex',
   flexDirection: 'column',
-  position: 'absolute',
   zIndex: 1,
-  '@media (max-aspect-ratio: 10/7)': {
-    width: 'calc(58vh * 10 / 7)',
-    left: 'calc(50% + 60px)',
-    transform: 'translateX(-50%)',
-    bottom: 'calc(100vh - calc(38vh * 10 / 7) - 60px)',
-  },
-  '@media (min-aspect-ratio: 10/7)': {
-    width: '58vw',
-    left: 'calc(50% + 60px)',
-    transform: 'translateX(-50%)',
-    bottom: 'calc(100vh - 38vw - 60px)',
-  },
 }));
-
-const StyledTable = styled(Table)({
-  borderCollapse: 'collapse',
-  display: 'flex',
-  flexFlow: 'column',
-  width: '100%',
-  overflow: 'auto',
-  backgroundColor: 'white',
-  border: '1px solid black',
-  '@media (max-aspect-ratio: 10/7)': {
-    height: '45vh',
-  },
-  '@media (min-aspect-ratio: 10/7)': {
-    height: 'calc(45vw * 7 / 10)',
-  },
-});
-
-const StyledTableHead = styled(TableHead)({
-  flex: '0 0 auto',
-});
-
-const StyledTableBody = styled(TableBody)({
-  flex: '1 1 auto',
-  display: 'block',
-  overflowY: 'auto',
-});
-
-const StyledTableRow = styled(TableRow)({
-  width: '100%',
-  display: 'table',
-  tableLayout: 'fixed',
-});
-
-const StyledTableCell = styled(TableCell)({
-  border: '1px solid black',
-  paddingLeft: 'calc(0.8vh * 10 / 7)',
-  '@media (min-aspect-ratio: 10/7)': {
-    paddingLeft: '0.8vw',
-  },
-});
-
-const StyledTableHeaderCell = styled(TableCell)({
-  textAlign: 'center',
-  color: 'green',
-  backgroundColor: 'yellow',
-  border: '1px solid black',
-});
 
 const ScrollableContent = styled('div')({
   flex: 1,
@@ -370,7 +309,7 @@ function App() {
 
   return (
     <AppContainer>
-      <Typography 
+      {/* <Typography 
         variant="h4" 
         component="h1" 
         gutterBottom 
@@ -390,7 +329,7 @@ function App() {
         }}
       >
         Masters 2025 Pool Leaderboard
-      </Typography>
+      </Typography> */}
       <NavigationButtons
         value={view}
         exclusive
@@ -410,11 +349,11 @@ function App() {
       </NavigationButtons>
       {view === 'current' ? (
         <>
-          <Tooltip title={isCondensed ? "Show Details" : "Condense View"}>
-            <ToggleButton onClick={toggleView} size="large">
+          {/* <Tooltip title={isCondensed ? "Show Details" : "Condense View"}>
+            <ToggleButton value="condense" onClick={toggleView} size="large">
               {isCondensed ? <ViewListIcon /> : <ViewModuleIcon />}
             </ToggleButton>
-          </Tooltip>
+          </Tooltip> */}
           <LeaderboardContainer>
             <ScrollableContent>
               <Box sx={{ pt: 2, pb: 2 }}>
