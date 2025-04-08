@@ -1,120 +1,66 @@
 import { GolferScore, PoolMember } from '../types';
+import responses from './responses.csv?raw';
 
-export const mockGolfers: GolferScore[] = [
-  {
-    id: '1',
-    name: 'Scottie Scheffler',
-    rounds: { round1: -7, round2: -2, round3: -4, round4: -3 },
-    total: -16,
-    position: 1,
-    madeCut: true
-  },
-  {
-    id: '2',
-    name: 'Rory McIlroy',
-    rounds: { round1: -4, round2: -3, round3: -5, round4: -2 },
-    total: -14,
-    position: 2,
-    madeCut: true
-  },
-  {
-    id: '3',
-    name: 'Jon Rahm',
-    rounds: { round1: -3, round2: -4, round3: -2, round4: -4 },
-    total: -13,
-    position: 3,
-    madeCut: true
-  },
-  {
-    id: '4',
-    name: 'Brooks Koepka',
-    rounds: { round1: -2, round2: -3, round3: null, round4: null },
-    total: -5,
-    position: 55,
-    madeCut: false
-  },
-  {
-    id: '5',
-    name: 'Jordan Spieth',
-    rounds: { round1: -4, round2: -2, round3: -3, round4: -1 },
-    total: -10,
-    position: 4,
-    madeCut: true
-  },
-  {
-    id: '6',
-    name: 'Justin Thomas',
-    rounds: { round1: -3, round2: -4, round3: -2, round4: -1 },
-    total: -10,
-    position: 5,
-    madeCut: true
-  },
-  {
-    id: '7',
-    name: 'Xander Schauffele',
-    rounds: { round1: -5, round2: -1, round3: -3, round4: -2 },
-    total: -11,
-    position: 6,
-    madeCut: true
-  },
-  {
-    id: '8',
-    name: 'Patrick Cantlay',
-    rounds: { round1: -2, round2: -3, round3: -4, round4: -2 },
-    total: -11,
-    position: 7,
-    madeCut: true
-  },
-  {
-    id: '9',
-    name: 'Viktor Hovland',
-    rounds: { round1: -3, round2: -2, round3: null, round4: null },
-    total: -5,
-    position: 56,
-    madeCut: false
-  },
-  {
-    id: '10',
-    name: 'Collin Morikawa',
-    rounds: { round1: -4, round2: -3, round3: -2, round4: -1 },
-    total: -10,
-    position: 8,
-    madeCut: true
+// Extract all unique golfer names from responses.csv
+const getUniqueGolfers = (csvText: string): string[] => {
+  const lines = csvText.split('\n');
+  const golfers = new Set<string>();
+  
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',');
+    for (let j = 1; j < values.length; j++) {
+      golfers.add(values[j].trim());
+    }
   }
-];
+  
+  return Array.from(golfers);
+};
 
-// Helper function to get best 4 players for a pool member
-function getBestFourPlayers(picks: GolferScore[]): GolferScore[] {
+const allGolfers = getUniqueGolfers(responses);
+
+export const mockGolfers: GolferScore[] = allGolfers.map((name, index) => ({
+  id: (index + 1).toString(),
+  name,
+  rounds: {
+    round1: Math.floor(Math.random() * 10) - 5, // Random score between -5 and +4
+    round2: Math.floor(Math.random() * 10) - 5,
+    round3: Math.floor(Math.random() * 10) - 5,
+    round4: Math.floor(Math.random() * 10) - 5
+  },
+  total: 0, // Will be calculated based on rounds
+  position: index + 1,
+  madeCut: true
+})).map(golfer => ({
+  ...golfer,
+  total: Object.values(golfer.rounds).reduce((sum, score) => sum + (score || 0), 0)
+}));
+
+// Helper function to get best 8 players for a pool member
+function getBestEightPlayers(picks: GolferScore[]): GolferScore[] {
   return picks
     .sort((a, b) => a.total - b.total)
-    .slice(0, 4);
+    .slice(0, 8);
 }
 
-// Helper function to calculate best four scores for a round
-function calculateBestFourForRound(picks: GolferScore[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): number {
-  const bestFour = getBestFourPlayers(picks);
-  return bestFour
-    .map(golfer => golfer.rounds[roundKey] || 0)
-    .reduce((sum, score) => sum + score, 0);
-}
-
-// Helper function to calculate best four total
-function calculateBestFourTotal(picks: GolferScore[]): number {
-  return getBestFourPlayers(picks)
+// Helper function to calculate best eight total
+function calculateBestEightTotal(picks: GolferScore[]): number {
+  return getBestEightPlayers(picks)
     .reduce((sum, golfer) => sum + golfer.total, 0);
 }
 
 // Helper function to check if a pool member is cut
 function isPoolMemberCut(picks: GolferScore[]): boolean {
   const playersWhoMadeCut = picks.filter(golfer => golfer.madeCut).length;
-  return playersWhoMadeCut < 4;
+  return playersWhoMadeCut < 8;
 }
 
 // Calculate positions for all pool members for a specific round
 function calculateRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): { [key: string]: number } {
   const roundScores = poolMembers.map(member => ({
     id: member.id,
-    score: calculateBestFourForRound(member.picks, roundKey)
+    score: getBestEightPlayers(member.picks)
+      .map((golfer: GolferScore) => golfer.rounds[roundKey] || 0)
+      .reduce((sum: number, score: number) => sum + score, 0)
   }));
   
   roundScores.sort((a, b) => a.score - b.score);
@@ -129,18 +75,18 @@ function calculateRoundPositions(poolMembers: { id: string; picks: GolferScore[]
 
 // Calculate cumulative scores up to a specific round
 function calculateCumulativeScore(picks: GolferScore[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): number {
-  const bestFour = getBestFourPlayers(picks);
+  const bestEight = getBestEightPlayers(picks);
   let total = 0;
   
   // Add up scores for all rounds up to and including the specified round
   if (roundKey === 'round1') {
-    total = bestFour.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0), 0);
+    total = bestEight.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0), 0);
   } else if (roundKey === 'round2') {
-    total = bestFour.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0), 0);
+    total = bestEight.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0), 0);
   } else if (roundKey === 'round3') {
-    total = bestFour.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0), 0);
+    total = bestEight.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0), 0);
   } else if (roundKey === 'round4') {
-    total = bestFour.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0) + (golfer.rounds.round4 || 0), 0);
+    total = bestEight.reduce((sum, golfer) => sum + (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0) + (golfer.rounds.round4 || 0), 0);
   }
   
   return total;
@@ -173,10 +119,10 @@ function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScor
   const round3Positions = calculateCumulativePositions(poolMembers, 'round3');
   const round4Positions = calculateCumulativePositions(poolMembers, 'round4');
   
-  // Calculate current positions based on best 4 total scores
+  // Calculate current positions based on best 8 total scores
   const currentScores = poolMembers.map(member => ({
     id: member.id,
-    score: calculateBestFourTotal(member.picks)
+    score: calculateBestEightTotal(member.picks)
   }));
   
   currentScores.sort((a, b) => a.score - b.score);
@@ -200,84 +146,65 @@ function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScor
   return positions;
 }
 
-// Create pool members with calculated positions
-const poolMembersData: Omit<PoolMember, 'bestFourTotal' | 'roundPositions' | 'isCut'>[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    picks: [mockGolfers[0], mockGolfers[1], mockGolfers[2], mockGolfers[4], mockGolfers[6], mockGolfers[7]],
-  },
-  {
-    id: '2',
-    name: 'Jane Doe',
-    picks: [mockGolfers[1], mockGolfers[2], mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[9]],
-  },
-  {
-    id: '3',
-    name: 'Bob Wilson',
-    picks: [mockGolfers[3], mockGolfers[4], mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[8]],
-  },
-  {
-    id: '4',
-    name: 'Alice Johnson',
-    picks: [mockGolfers[0], mockGolfers[2], mockGolfers[4], mockGolfers[6], mockGolfers[8], mockGolfers[9]],
-  },
-  {
-    id: '5',
-    name: 'Charlie Brown',
-    picks: [mockGolfers[1], mockGolfers[3], mockGolfers[5], mockGolfers[7], mockGolfers[8], mockGolfers[9]],
-  },
-  {
-    id: '6',
-    name: 'David Miller',
-    picks: [mockGolfers[0], mockGolfers[1], mockGolfers[3], mockGolfers[5], mockGolfers[7], mockGolfers[9]],
-  },
-  {
-    id: '7',
-    name: 'Emma Wilson',
-    picks: [mockGolfers[2], mockGolfers[4], mockGolfers[5], mockGolfers[6], mockGolfers[8], mockGolfers[9]],
-  },
-  {
-    id: '8',
-    name: 'Frank Thompson',
-    picks: [mockGolfers[0], mockGolfers[2], mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[8]],
-  },
-  {
-    id: '9',
-    name: 'Sarah Davis',
-    picks: [mockGolfers[0], mockGolfers[1], mockGolfers[2], mockGolfers[3], mockGolfers[4], mockGolfers[5]],
-  },
-  {
-    id: '10',
-    name: 'Michael Chen',
-    picks: [mockGolfers[3], mockGolfers[4], mockGolfers[8], mockGolfers[9], mockGolfers[0], mockGolfers[1]],
-  },
-  {
-    id: '11',
-    name: 'Lisa Anderson',
-    picks: [mockGolfers[2], mockGolfers[3], mockGolfers[4], mockGolfers[8], mockGolfers[9], mockGolfers[0]],
-  },
-  {
-    id: '12',
-    name: 'Tom Wilson',
-    picks: [mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[8], mockGolfers[9], mockGolfers[0]],
-  },
-  {
-    id: '13',
-    name: 'Rachel Green',
-    picks: [mockGolfers[0], mockGolfers[2], mockGolfers[4], mockGolfers[6], mockGolfers[8], mockGolfers[9]],
-  },
-  {
-    id: '14',
-    name: 'James Bond',
-    picks: [mockGolfers[1], mockGolfers[3], mockGolfers[5], mockGolfers[7], mockGolfers[8], mockGolfers[9]],
-  },
-  {
-    id: '15',
-    name: 'Maria Garcia',
-    picks: [mockGolfers[0], mockGolfers[1], mockGolfers[2], mockGolfers[3], mockGolfers[8], mockGolfers[9]],
+// Function to find a golfer in mockGolfers by name
+const findGolferByName = (name: string): GolferScore | undefined => {
+  const golfer = mockGolfers.find(golfer => golfer.name === name);
+  if (!golfer) {
+    console.warn(`Golfer not found: ${name}`);
   }
-];
+  return golfer;
+};
+
+// Function to read and parse CSV file
+const parseCSV = (csvText: string): Omit<PoolMember, 'bestFourTotal' | 'roundPositions' | 'isCut'>[] => {
+  const lines = csvText.split('\n');
+  const headers = lines[0].split(',');
+  const poolMembers: Omit<PoolMember, 'bestFourTotal' | 'roundPositions' | 'isCut'>[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',');
+    if (values.length === headers.length) {
+      const member: Omit<PoolMember, 'bestFourTotal' | 'roundPositions' | 'isCut'> = {
+        id: i.toString(),
+        name: values[0],
+        picks: []
+      };
+
+      for (let j = 1; j < values.length; j++) {
+        const golferName = values[j].trim();
+        const golfer = findGolferByName(golferName);
+        if (golfer) {
+          member.picks.push(golfer);
+        }
+      }
+
+      poolMembers.push(member);
+    }
+  }
+
+  return poolMembers;
+};
+
+// Parse the CSV data
+let poolMembersData: Omit<PoolMember, 'bestFourTotal' | 'roundPositions' | 'isCut'>[] = [];
+try {
+  poolMembersData = parseCSV(responses);
+} catch (error) {
+  console.error('Error parsing responses.csv:', error);
+  // Fallback to mock data if parsing fails
+  poolMembersData = [
+    {
+      id: '1',
+      name: 'John Smith',
+      picks: [mockGolfers[0], mockGolfers[1], mockGolfers[2], mockGolfers[4], mockGolfers[6], mockGolfers[7]],
+    },
+    {
+      id: '2',
+      name: 'Jane Doe',
+      picks: [mockGolfers[1], mockGolfers[2], mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[9]],
+    }
+  ];
+}
 
 // Calculate all positions
 const allPositions = calculateAllRoundPositions(poolMembersData);
@@ -285,7 +212,7 @@ const allPositions = calculateAllRoundPositions(poolMembersData);
 // Create final pool members array with calculated values
 export const mockPoolMembers: PoolMember[] = poolMembersData.map(member => ({
   ...member,
-  bestFourTotal: calculateBestFourTotal(member.picks),
+  bestFourTotal: calculateBestEightTotal(member.picks),
   roundPositions: allPositions[member.id],
   isCut: isPoolMemberCut(member.picks)
 })); 

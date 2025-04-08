@@ -21,8 +21,6 @@ import {
   ToggleButton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import HistoryIcon from '@mui/icons-material/History';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import { mockPoolMembers } from './data/mockData';
@@ -88,7 +86,10 @@ const StyledAccordionDetails = styled(AccordionDetails)<{ condensed?: boolean }>
 }));
 
 const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
-  color: score === null ? 'inherit' : score > 0 ? '#d32f2f' : score < 0 ? '#2e7d32' : 'inherit',
+  color: score === null ? 'inherit' : 
+         score > 0 ? '#2e7d32' : // Green for positive numbers
+         score < 0 ? '#d32f2f' : // Red for negative numbers
+         'inherit',
   fontWeight: 500,
 }));
 
