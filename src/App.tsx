@@ -83,10 +83,17 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
 }));
 
 const StyledAccordionDetails = styled(AccordionDetails)<{ condensed?: boolean }>(({ theme, condensed }) => ({
-  padding: condensed ? theme.spacing(0.5) : theme.spacing(1),
+  padding: condensed ? theme.spacing(0.25) : theme.spacing(1),
   backgroundColor: '#f8f8f8',
   borderTop: 'none',
   marginTop: 0,
+  '& .MuiTable-root': {
+    fontSize: condensed ? '0.7rem' : '0.875rem',
+  },
+  '& .MuiTableCell-root': {
+    padding: condensed ? '2px 4px' : '8px 16px',
+    fontSize: condensed ? '0.7rem' : '0.875rem',
+  },
 }));
 
 const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
@@ -417,7 +424,10 @@ function App() {
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
                             <Typography 
                               variant="subtitle1"
-                              sx={{ fontWeight: 'bold' }}
+                              sx={{ 
+                                fontWeight: 'bold',
+                                fontSize: isCondensed ? '0.7rem' : '0.8rem'
+                              }}
                             >
                               {member.name}
                             </Typography>
@@ -496,7 +506,10 @@ function App() {
                                     }}
                                   >
                                     <TableCell component="th" scope="row">
-                                      <Typography sx={{ fontWeight: 500 }}>
+                                      <Typography sx={{ 
+                                        fontWeight: 500,
+                                        fontSize: isCondensed ? '0.7rem' : '0.8rem'
+                                      }}>
                                         {golfer.name}
                                       </Typography>
                                     </TableCell>
