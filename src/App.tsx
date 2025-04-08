@@ -370,7 +370,7 @@ function App() {
           </Tooltip> */}
           <LeaderboardContainer>
             <ScrollableContent>
-              <Box sx={{ pt: 2, pb: 2 }}>
+              <Box sx={{ pt: 0, pb: 0 }}>
                 {mockPoolMembers
                   .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal)
                   .map((member) => (
