@@ -53,7 +53,7 @@ const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, con
 const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>(({ theme, condensed }) => ({
   backgroundColor: '#006747',
   color: 'white',
-  minHeight: '24px !important',
+  minHeight: 'clamp(24px, 2.5vh, 32px) !important',
   '&:hover': {
     backgroundColor: '#005238',
   },
@@ -62,12 +62,12 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
   },
   '&.Mui-expanded': {
     backgroundColor: '#006747',
-    minHeight: '24px !important',
+    minHeight: 'clamp(24px, 2.5vh, 32px) !important',
   },
   '& .MuiAccordionSummary-content': {
-    margin: condensed ? '2px 4px' : '4px 8px',
+    margin: condensed ? 'clamp(1px, 0.5vh, 3px) clamp(2px, 1vh, 6px)' : 'clamp(2px, 1vh, 4px) clamp(4px, 1.5vh, 8px)',
     '&.Mui-expanded': {
-      margin: condensed ? '2px 4px' : '4px 8px',
+      margin: condensed ? 'clamp(1px, 0.5vh, 3px) clamp(2px, 1vh, 6px)' : 'clamp(2px, 1vh, 4px) clamp(4px, 1.5vh, 8px)',
     },
   },
   '& .MuiAccordionSummary-expandIconWrapper': {
@@ -78,7 +78,7 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
     transform: 'rotate(180deg)',
   },
   '& .MuiTypography-root': {
-    fontSize: condensed ? '0.75rem' : '0.875rem',
+    fontSize: condensed ? 'clamp(0.65rem, 1.5vh, 0.8rem)' : 'clamp(0.7rem, 1.75vh, 0.9rem)',
   },
 }));
 
@@ -88,11 +88,11 @@ const StyledAccordionDetails = styled(AccordionDetails)<{ condensed?: boolean }>
   borderTop: 'none',
   marginTop: 0,
   '& .MuiTable-root': {
-    fontSize: condensed ? '0.7rem' : '0.875rem',
+    fontSize: condensed ? 'clamp(0.65rem, 1.5vh, 0.8rem)' : 'clamp(0.7rem, 1.75vh, 0.9rem)',
   },
   '& .MuiTableCell-root': {
-    padding: condensed ? '2px 4px' : '8px 16px',
-    fontSize: condensed ? '0.7rem' : '0.875rem',
+    padding: condensed ? 'clamp(1px, 0.5vh, 3px) clamp(2px, 1vh, 6px)' : 'clamp(4px, 1.25vh, 8px) clamp(6px, 1.75vh, 12px)',
+    fontSize: condensed ? 'clamp(0.65rem, 1.5vh, 0.8rem)' : 'clamp(0.7rem, 1.75vh, 0.9rem)',
   },
 }));
 
