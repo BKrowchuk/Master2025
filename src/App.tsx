@@ -53,6 +53,7 @@ const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, con
 const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>(({ theme, condensed }) => ({
   backgroundColor: '#006747',
   color: 'white',
+  minHeight: '24px !important',
   '&:hover': {
     backgroundColor: '#005238',
   },
@@ -61,12 +62,12 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
   },
   '&.Mui-expanded': {
     backgroundColor: '#006747',
-    minHeight: '48px',
+    minHeight: '24px !important',
   },
   '& .MuiAccordionSummary-content': {
-    margin: condensed ? '8px 12px' : '12px 16px',
+    margin: condensed ? '2px 4px' : '4px 8px',
     '&.Mui-expanded': {
-      margin: condensed ? '8px 12px' : '12px 16px',
+      margin: condensed ? '2px 4px' : '4px 8px',
     },
   },
   '& .MuiAccordionSummary-expandIconWrapper': {
@@ -75,6 +76,9 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
   },
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(180deg)',
+  },
+  '& .MuiTypography-root': {
+    fontSize: condensed ? '0.75rem' : '0.875rem',
   },
 }));
 
@@ -429,7 +433,10 @@ function App() {
                               color: 'rgba(255, 255, 255, 0.8)',
                               whiteSpace: 'nowrap',
                               flex: 1,
-                              '@media (max-width: 725px)': {
+                              '@media (max-width: 650px)': {
+                                display: 'none'
+                              },
+                              '@media (max-height: 475px)': {
                                 display: 'none'
                               }
                             }}
