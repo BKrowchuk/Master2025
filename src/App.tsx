@@ -427,7 +427,10 @@ function App() {
                             sx={{ 
                               color: 'rgba(255, 255, 255, 0.8)',
                               whiteSpace: 'nowrap',
-                              flex: 1
+                              flex: 1,
+                              '@media (max-width: 725px)': {
+                                display: 'none'
+                              }
                             }}
                           >
                             Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
@@ -437,7 +440,8 @@ function App() {
                             color={member.isCut ? 'error' : 'white'}
                             sx={{ 
                               fontWeight: 'bold',
-                              minWidth: 'fit-content'
+                              minWidth: 'fit-content',
+                              marginLeft: 'auto'
                             }}
                           >
                             {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
