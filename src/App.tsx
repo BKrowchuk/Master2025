@@ -108,13 +108,12 @@ const AppContainer = styled('div')({
 
 const LeaderboardContainer = styled('div')(({ theme }) => ({
   margin: 'auto',
-  paddingLeft: '2vw',
   position: 'relative',
   backgroundColor: 'white',
   borderRadius: '8px',
   boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
   overflow: 'hidden',
-  padding: '20px',
+  padding: '3px',
   boxSizing: 'border-box',
   display: 'flex',
   flexDirection: 'column',
@@ -137,7 +136,7 @@ const ScrollableContent = styled('div')({
   flex: 1,
   overflowY: 'auto',
   height: '100%',
-  paddingRight: '8px',
+  paddingRight: '2px',
   '&::-webkit-scrollbar': {
     width: '8px',
   },
