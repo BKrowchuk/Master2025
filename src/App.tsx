@@ -23,6 +23,8 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryIcon from '@mui/icons-material/History';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import SortIcon from '@mui/icons-material/Sort';
 import { mockPoolMembers } from './data/mockData';
 
 const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, condensed }) => ({
@@ -342,6 +344,7 @@ function App() {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [isCondensed, setIsCondensed] = useState(true);
   const [view, setView] = useState<'current' | 'past'>('current');
+  const [sortByScore, setSortByScore] = useState(false);
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
@@ -355,6 +358,10 @@ function App() {
     if (newView !== null) {
       setView(newView);
     }
+  };
+
+  const toggleSortOrder = () => {
+    setSortByScore(!sortByScore);
   };
 
   return (
@@ -399,11 +406,21 @@ function App() {
       </NavigationButtons>
       {view === 'current' ? (
         <>
-          {/* <Tooltip title={isCondensed ? "Show Details" : "Condense View"}>
-            <ToggleButton value="condense" onClick={toggleView} size="large">
-              {isCondensed ? <ViewListIcon /> : <ViewModuleIcon />}
-            </ToggleButton>
-          </Tooltip> */}
+          <Box sx={{ position: 'absolute', top: 20, left: 20, zIndex: 1 }}>
+            <Tooltip title={sortByScore ? "Sort by Group" : "Sort by Score"}>
+              <IconButton 
+                onClick={toggleSortOrder}
+                sx={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                  }
+                }}
+              >
+                {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
+              </IconButton>
+            </Tooltip>
+          </Box>
           <LeaderboardContainer>
             <ScrollableContent>
               <Box sx={{ pt: 0, pb: 0 }}>
@@ -484,6 +501,7 @@ function App() {
                           <Table size={isCondensed ? "small" : "medium"}>
                             <TableHead>
                               <TableRow sx={{ backgroundColor: '#006747' }}>
+                                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
                                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
                                 <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
@@ -494,8 +512,13 @@ function App() {
                               </TableRow>
                             </TableHead>
                             <TableBody>
-                              {member.picks
-                                .sort((a, b) => a.total - b.total)
+                              {[...member.picks]
+                                .sort((a, b) => {
+                                  if (sortByScore) {
+                                    return a.total - b.total;
+                                  }
+                                  return a.group - b.group;
+                                })
                                 .map((golfer) => (
                                   <TableRow 
                                     key={golfer.id}
@@ -510,6 +533,7 @@ function App() {
                                       },
                                     }}
                                   >
+                                    <TableCell>{golfer.group}</TableCell>
                                     <TableCell component="th" scope="row">
                                       <Typography sx={{ 
                                         fontWeight: 500,

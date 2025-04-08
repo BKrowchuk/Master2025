@@ -8,8 +8,9 @@ export interface GolferScore {
     round4: number | null;
   };
   total: number;
-  position: number;
+  position: number | 'CUT';
   madeCut: boolean;
+  group: number;
 }
 
 export interface PoolMember {

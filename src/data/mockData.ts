@@ -48,7 +48,10 @@ const parseCSV = (csvText: string): Omit<PoolMember, 'bestFourTotal' | 'roundPos
         const golferName = values[j].trim();
         const golfer = findGolferByName(golferName);
         if (golfer) {
-          member.picks.push(golfer);
+          member.picks.push({
+            ...golfer,
+            group: j
+          });
         }
       }
 
