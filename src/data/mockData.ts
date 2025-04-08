@@ -3,21 +3,21 @@ import responses from './responses.csv?raw';
 import { mockGolfers } from './mockGolfers';
 
 // Extract all unique golfer names from responses.csv
-const getUniqueGolfers = (csvText: string): string[] => {
-  const lines = csvText.split('\n');
-  const golfers = new Set<string>();
+// const getUniqueGolfers = (csvText: string): string[] => {
+//   const lines = csvText.split('\n');
+//   const golfers = new Set<string>();
   
-  for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',');
-    for (let j = 1; j < values.length; j++) {
-      golfers.add(values[j].trim());
-    }
-  }
+//   for (let i = 1; i < lines.length; i++) {
+//     const values = lines[i].split(',');
+//     for (let j = 1; j < values.length; j++) {
+//       golfers.add(values[j].trim());
+//     }
+//   }
   
-  return Array.from(golfers);
-};
+//   return Array.from(golfers);
+// };
 
-const allGolfers = getUniqueGolfers(responses);
+// const allGolfers = getUniqueGolfers(responses);
 
 // Function to find a golfer in mockGolfers by name
 const findGolferByName = (name: string): GolferScore | undefined => {
