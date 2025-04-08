@@ -119,15 +119,17 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   zIndex: 1,
-  '@media (max-aspect-ratio: 10/7)': {
-    width: 'calc(58vh * 10 / 7)',
-    bottom: 'calc(-18vh)',
-    height: '45vh',
+  '@media (max-aspect-ratio: 1868/1266)': {
+    width: '91vw',
+    height: 'calc(72vw * 0.678)', // 1266.626/1868.3149 ≈ 0.678
+    left: '0.22vw',
+    bottom: 'calc(1vh)',
   },
-  '@media (min-aspect-ratio: 10/7)': {
-    width: '58vw',
-    bottom: 'calc(-18vw * 7/10)',
-    height: 'calc(45vw * 7 / 10)',
+  '@media (min-aspect-ratio: 1868/1266)': {
+    width: 'calc(91vh / 0.678)', // 1266.626/1868.3149 ≈ 0.678
+    height: '72vh',
+    left: '0.22vw',
+    bottom: 'calc(1vh)',
   },
 }));
 
