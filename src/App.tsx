@@ -104,16 +104,20 @@ const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
   fontWeight: 500,
 }));
 
-const PositionChip = styled(Chip)<{ position: number }>(({ position, theme }) => ({
-  backgroundColor: position === 1 ? '#FFD700' : // Gold
+const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, theme }) => ({
+  backgroundColor: position === 'CUT' ? '#d32f2f' : // Red for CUT
+                  position === 1 ? '#FFD700' : // Gold
                   position === 2 ? '#C0C0C0' : // Silver
                   position === 3 ? '#CD7F32' : // Bronze
                   '#006747', // Masters green
-  color: position <= 3 ? '#000' : 'white',
+  color: position === 'CUT' ? 'white' :
+         position <= 3 ? '#000' : 'white',
   fontWeight: 'bold',
-  marginLeft: theme.spacing(1),
-  '.MuiChip-label': {
-    padding: '0 8px',
+  width: '45px',
+  height: '24px',
+  '& .MuiChip-label': {
+    padding: '0 4px',
+    fontSize: '0.7rem',
   },
 }));
 
@@ -242,7 +246,8 @@ function formatScore(score: number | null): string {
   return score > 0 ? `+${score}` : score.toString();
 }
 
-function formatPosition(position: number): string {
+function formatPosition(position: number | 'CUT'): string {
+  if (position === 'CUT') return 'CUT';
   const suffixes = ['th', 'st', 'nd', 'rd'];
   const suffix = position <= 3 ? suffixes[position] : suffixes[0];
   return `${position}${suffix}`;
@@ -422,6 +427,11 @@ function App() {
                           gap: 2
                         }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
+                            <PositionChip 
+                              label={formatPosition(member.roundPositions.current)}
+                              position={member.roundPositions.current}
+                              size="small"
+                            />
                             <Typography 
                               variant="subtitle1"
                               sx={{ 
@@ -431,11 +441,6 @@ function App() {
                             >
                               {member.name}
                             </Typography>
-                            <PositionChip 
-                              label={formatPosition(member.roundPositions.current)}
-                              position={member.roundPositions.current}
-                              size="small"
-                            />
                           </Box>
                           <Typography 
                             variant="body2" 

@@ -18,11 +18,11 @@ export interface PoolMember {
   picks: GolferScore[];
   bestFourTotal: number;
   roundPositions: {
-    round1: number;
-    round2: number;
-    round3: number;
-    round4: number;
-    current: number;
+    round1: number | 'CUT';
+    round2: number | 'CUT';
+    round3: number | 'CUT';
+    round4: number | 'CUT';
+    current: number | 'CUT';
   };
   isCut: boolean;
 } 
