@@ -386,13 +386,13 @@ function App() {
                       >
                         <Box sx={{ 
                           display: 'flex', 
-                          justifyContent: 'space-between', 
                           width: '100%', 
-                          alignItems: 'center' 
+                          alignItems: 'center',
+                          gap: 2
                         }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
                             <Typography 
-                              variant={isCondensed ? "subtitle1" : "h6"} 
+                              variant="subtitle1"
                               sx={{ fontWeight: 'bold' }}
                             >
                               {member.name}
@@ -403,23 +403,26 @@ function App() {
                               size="small"
                             />
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                              <Typography 
-                                variant={isCondensed ? "caption" : "body2"} 
-                                sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
-                              >
-                                Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
-                              </Typography>
-                              <Typography 
-                                variant={isCondensed ? "subtitle1" : "h6"}
-                                color={member.isCut ? 'error' : 'white'}
-                                sx={{ fontWeight: 'bold' }}
-                              >
-                                {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
-                              </Typography>
-                            </Box>
-                          </Box>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              whiteSpace: 'nowrap',
+                              flex: 1
+                            }}
+                          >
+                            Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
+                          </Typography>
+                          <Typography 
+                            variant="subtitle1"
+                            color={member.isCut ? 'error' : 'white'}
+                            sx={{ 
+                              fontWeight: 'bold',
+                              minWidth: 'fit-content'
+                            }}
+                          >
+                            {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
+                          </Typography>
                         </Box>
                       </StyledAccordionSummary>
                       <StyledAccordionDetails condensed={isCondensed}>
