@@ -92,10 +92,13 @@ const AppContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  backgroundImage: 'url("https://img.bleacherreport.net/img/slides/photos/004/513/180/96cc5c74a0ae728f0511bc78b615dd9a_crop_exact.jpg?w=2975&h=2048&q=85")',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center bottom',
-  backgroundRepeat: 'no-repeat',
+  background: `
+    url("/background.svg"),
+    url("/augusta.jpg")
+  `,
+  backgroundSize: '100% 100%, cover',
+  backgroundPosition: 'center, center',
+  backgroundRepeat: 'no-repeat, no-repeat',
   padding: '0',
   boxSizing: 'border-box',
   margin: 0,
@@ -118,12 +121,12 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
   zIndex: 1,
   '@media (max-aspect-ratio: 10/7)': {
     width: 'calc(58vh * 10 / 7)',
-    bottom: 'calc(calc(57.37vh * 10 / 7) - 100vh)',
+    bottom: 'calc(-18vh)',
     height: '45vh',
   },
   '@media (min-aspect-ratio: 10/7)': {
     width: '58vw',
-    bottom: 'calc(calc(57.37vh * 10 / 7) - 100vh)',
+    bottom: 'calc(-18vw * 7/10)',
     height: 'calc(45vw * 7 / 10)',
   },
 }));
