@@ -35,6 +35,14 @@ const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, con
   '&:before': {
     display: 'none',
   },
+  '&.Mui-focused': {
+    outline: 'none',
+  },
+  '& .MuiButtonBase-root': {
+    '&:hover, &:focus, &:active': {
+      outline: 'none',
+    },
+  },
   border: '1px solid #006747',
   borderRadius: '4px !important',
   overflow: 'hidden',
@@ -50,8 +58,18 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
   '&:hover': {
     backgroundColor: '#005238',
   },
+  '&.Mui-focusVisible': {
+    backgroundColor: '#006747',
+  },
+  '&.Mui-expanded': {
+    backgroundColor: '#006747',
+    minHeight: '48px',
+  },
   '& .MuiAccordionSummary-content': {
     margin: condensed ? '8px 12px' : '12px 16px',
+    '&.Mui-expanded': {
+      margin: condensed ? '8px 12px' : '12px 16px',
+    },
   },
   '& .MuiAccordionSummary-expandIconWrapper': {
     color: '#FFD700',
@@ -63,9 +81,10 @@ const StyledAccordionSummary = styled(AccordionSummary)<{ condensed?: boolean }>
 }));
 
 const StyledAccordionDetails = styled(AccordionDetails)<{ condensed?: boolean }>(({ theme, condensed }) => ({
-  padding: condensed ? theme.spacing(1) : theme.spacing(2),
+  padding: condensed ? theme.spacing(0.5) : theme.spacing(1),
   backgroundColor: '#f8f8f8',
-  borderTop: '1px solid #e0e0e0',
+  borderTop: 'none',
+  marginTop: 0,
 }));
 
 const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
