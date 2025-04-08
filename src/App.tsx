@@ -116,8 +116,8 @@ const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, the
   width: '45px',
   height: '24px',
   '& .MuiChip-label': {
-    padding: '0 4px',
-    fontSize: '0.7rem',
+    padding: '0 1px',
+    fontSize: '0.65rem',
   },
 }));
 
