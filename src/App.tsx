@@ -125,17 +125,20 @@ const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, the
 
 const AppContainer = styled('div')({
   minHeight: '100vh',
+  width: '100vw',
   background: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
     url("${import.meta.env.BASE_URL}background.svg"),
     url("${import.meta.env.BASE_URL}augusta.jpg")`,
-  backgroundSize: 'cover, cover, cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
+  backgroundSize: '100% 100%, 100% 100%, cover',
+  backgroundPosition: 'center, center, center',
+  backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '20px',
   position: 'relative',
+  overflow: 'hidden',
+  boxSizing: 'border-box',
 });
 
 const LeaderboardContainer = styled('div')(({ theme }) => ({

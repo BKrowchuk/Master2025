@@ -70,13 +70,13 @@ try {
   console.error('Error parsing responses.csv:', error);
   // Fallback to mock data if parsing fails
   poolMembersData = [
-    {
-      id: '1',
+  {
+    id: '1',
       name: 'John Smith',
       picks: [mockGolfers[0], mockGolfers[1], mockGolfers[2], mockGolfers[4], mockGolfers[6], mockGolfers[7], mockGolfers[8], mockGolfers[9]],
-    },
-    {
-      id: '2',
+  },
+  {
+    id: '2',
       name: 'Jane Doe',
       picks: [mockGolfers[1], mockGolfers[2], mockGolfers[5], mockGolfers[6], mockGolfers[7], mockGolfers[9], mockGolfers[10], mockGolfers[11]],
     }
