@@ -124,22 +124,17 @@ const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, the
 }));
 
 const AppContainer = styled('div')({
-  width: '100vw',
-  height: '100vh',
+  minHeight: '100vh',
+  background: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("${import.meta.env.BASE_URL}background.svg"),
+    url("${import.meta.env.BASE_URL}augusta.jpg")`,
+  backgroundSize: 'cover, cover, cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  background: `
-    url("/background.svg"),
-    url("/augusta.jpg")
-  `,
-  backgroundSize: '100% 100%, cover',
-  backgroundPosition: 'center, center',
-  backgroundRepeat: 'no-repeat, no-repeat',
-  padding: '0',
-  boxSizing: 'border-box',
-  margin: 0,
-  overflow: 'hidden',
+  padding: '20px',
   position: 'relative',
 });
 
