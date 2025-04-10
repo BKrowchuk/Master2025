@@ -174,11 +174,18 @@ const AppContainer = styled('div')({
   position: 'relative',
   overflow: 'hidden',
   boxSizing: 'border-box',
+  '@media (max-width: 600px)': {
+    padding: '10px',
+    height: '100vh',
+    overflow: 'hidden',
+  },
 });
 
 const LeaderboardContainer = styled('div')(({ theme }) => ({
-  margin: 'auto',
-  position: 'relative',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   backgroundColor: 'white',
   borderRadius: '8px',
   boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
@@ -188,17 +195,28 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   zIndex: 1,
-  '@media (max-aspect-ratio: 1868/1266)': {
-    width: '91vw',
-    height: 'calc(72vw * 0.678)', // 1266.626/1868.3149 ≈ 0.678
-    left: '0.22vw',
-    bottom: 'calc(1vh)',
+  transition: 'all 0.3s ease',
+  [theme.breakpoints.up('sm')]: {
+    width: '90%',
+    height: '90%',
+    '@media (max-aspect-ratio: 1868/1266)': {
+      width: '91vw',
+      height: 'calc(72vw * 0.678)', // 1266.626/1868.3149 ≈ 0.678
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
+    '@media (min-aspect-ratio: 1868/1266)': {
+      width: 'calc(91vh / 0.678)', // 1266.626/1868.3149 ≈ 0.678
+      height: '72vh',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
   },
-  '@media (min-aspect-ratio: 1868/1266)': {
-    width: 'calc(91vh / 0.678)', // 1266.626/1868.3149 ≈ 0.678
-    height: '72vh',
-    left: '0.22vw',
-    bottom: 'calc(1vh)',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    height: '90%',
+    borderRadius: '8px',
+    top: '45%', // Shift up to account for nav bar
   },
 }));
 
@@ -240,24 +258,37 @@ const ScrollableContent = styled('div')({
   },
 });
 
-const NavigationButtons = styled(ToggleButtonGroup)(({ theme }) => ({
-  position: 'absolute',
-  top: '20px',
-  right: '20px',
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+const NavigationBox = styled(Box)(({ theme }) => ({
+  position: 'fixed',
+  top: 20,
+  right: 20,
+  zIndex: 1000,
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  padding: '4px 8px',
   borderRadius: '8px',
-  padding: '4px',
-  '& .MuiToggleButton-root': {
-    color: '#006747',
-    '&.Mui-selected': {
-      backgroundColor: '#006747',
-      color: 'white',
-      '&:hover': {
-        backgroundColor: '#005238',
-      },
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1,
+  border: '1px solid rgba(0, 0, 0, 0.1)',
+  [theme.breakpoints.down('sm')]: {
+    position: 'fixed',
+    top: 'auto',
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: 0,
+    padding: '8px 16px',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.1)',
+    height: '60px',
+    '& .MuiToggleButtonGroup-root': {
+      width: '100%',
+      justifyContent: 'center',
     },
-    '&:hover': {
-      backgroundColor: 'rgba(0, 103, 71, 0.1)',
+    '& .MuiToggleButton-root': {
+      flex: 1,
     },
   },
 }));
@@ -777,20 +808,14 @@ function App() {
 
   return (
     <AppContainer>
-      <Box sx={{ 
-        position: 'fixed', 
-        top: 20, 
-        right: 20, 
-        zIndex: 1000,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        padding: '4px 8px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1,
-        border: '1px solid rgba(0, 0, 0, 0.1)'
-      }}>
+      <LeaderboardContainer>
+        <Box sx={{ flex: 1, overflow: 'hidden' }}>
+          {activeTab === 0 && <Leaderboard sortByScore={sortByScore} />}
+          {activeTab === 1 && <PastResults />}
+          {activeTab === 2 && <PicksTable />}
+        </Box>
+      </LeaderboardContainer>
+      <NavigationBox>
         <ToggleButtonGroup
           value={activeTab}
           exclusive
@@ -838,14 +863,7 @@ function App() {
         >
           {sortByScore ? <NumbersIcon /> : <GroupIcon />}
         </IconButton>
-      </Box>
-      <LeaderboardContainer>
-        <Box sx={{ flex: 1, overflow: 'hidden' }}>
-          {activeTab === 0 && <Leaderboard sortByScore={sortByScore} />}
-          {activeTab === 1 && <PastResults />}
-          {activeTab === 2 && <PicksTable />}
-        </Box>
-      </LeaderboardContainer>
+      </NavigationBox>
     </AppContainer>
   );
 }
