@@ -36,6 +36,8 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import SortIcon from '@mui/icons-material/Sort';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
+import NumbersIcon from '@mui/icons-material/Numbers';
+import GroupIcon from '@mui/icons-material/Group';
 import { mockPoolMembers } from './data/mockData';
 import { pastResults } from './data/pastResults';
 import { GolferScore } from './types';
@@ -852,7 +854,7 @@ function App() {
             }
           }}
         >
-          {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
+          {sortByScore ? <NumbersIcon /> : <GroupIcon />}
         </IconButton>
       </Box>
       <LeaderboardContainer>
