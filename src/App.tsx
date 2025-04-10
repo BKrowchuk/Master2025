@@ -39,6 +39,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { mockPoolMembers } from './data/mockData';
 import { pastResults } from './data/pastResults';
 import { GolferScore } from './types';
+import React from 'react';
 
 const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, condensed }) => ({
   marginBottom: condensed ? theme.spacing(0.5) : theme.spacing(1),
@@ -136,13 +137,14 @@ const ThruCell = styled(TableCell)({
   fontWeight: 500,
 });
 
-const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, theme }) => ({
+const PositionChip = styled(Chip)<{ position: number | 'CUT' | 'WD' }>(({ position, theme }) => ({
   backgroundColor: position === 'CUT' ? '#d32f2f' : // Red for CUT
+                  position === 'WD' ? '#999999' : // Gray for WD
                   position === 1 ? '#FFD700' : // Gold
                   position === 2 ? '#C0C0C0' : // Silver
                   position === 3 ? '#CD7F32' : // Bronze
                   '#006747', // Masters green
-  color: position === 'CUT' ? 'white' :
+  color: position === 'CUT' || position === 'WD' ? 'white' :
          position <= 3 ? '#000' : 'white',
   fontWeight: 'bold',
   width: '45px',
@@ -575,137 +577,159 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
     setIsCondensed(!isCondensed);
   };
 
+  // Pre-sort the members
+  const sortedMembers = React.useMemo(() => {
+    return mockPoolMembers
+      .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal);
+  }, []);
+
+  // Pre-sort the golfers for each member
+  const sortedGolfers = React.useMemo(() => {
+    return sortedMembers.map(member => ({
+      ...member,
+      picks: [...member.picks].sort((a, b) => {
+        if (sortByScore) {
+          // Handle null values and WD
+          if (a.total === null && b.total === null) return 0;
+          if (a.total === null) return 1;
+          if (b.total === null) return -1;
+          if (a.total === 'WD' && b.total === 'WD') return 0;
+          if (a.total === 'WD') return 1;
+          if (b.total === 'WD') return -1;
+          return (a.total as number) - (b.total as number);
+        }
+        return a.group - b.group;
+      })
+    }));
+  }, [sortByScore, sortedMembers]);
+
   return (
     <>
       <ScrollableContent>
         <Box sx={{ pt: 0, pb: 0 }}>
-          {mockPoolMembers
-            .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal)
-            .map((member) => (
-              <StyledAccordion
-                key={member.id}
-                expanded={expanded === member.id}
-                onChange={handleChange(member.id)}
+          {sortedGolfers.map((member) => (
+            <StyledAccordion
+              key={member.id}
+              expanded={expanded === member.id}
+              onChange={handleChange(member.id)}
+              condensed={isCondensed}
+            >
+              <StyledAccordionSummary 
+                expandIcon={<ExpandMoreIcon />}
                 condensed={isCondensed}
               >
-                <StyledAccordionSummary 
-                  expandIcon={<ExpandMoreIcon />}
-                  condensed={isCondensed}
-                >
-                  <Box sx={{ 
-                    display: 'flex', 
-                    width: '100%', 
-                    alignItems: 'center',
-                    gap: 2
-                  }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
-                      <Typography 
-                        variant="subtitle1"
-                        sx={{ 
-                          fontWeight: 'bold',
-                          fontSize: isCondensed ? '0.7rem' : '0.8rem'
-                        }}
-                      >
-                        {member.name}
-                      </Typography>
-                    </Box>
+                <Box sx={{ 
+                  display: 'flex', 
+                  width: '100%', 
+                  alignItems: 'center',
+                  gap: 2
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
+                    <PositionChip 
+                      label={formatPosition(member.roundPositions.current)}
+                      position={member.roundPositions.current}
+                      size="small"
+                    />
                     <Typography 
                       variant="subtitle1"
-                      color={member.isCut ? 'error' : 'white'}
                       sx={{ 
                         fontWeight: 'bold',
-                        minWidth: 'fit-content',
-                        marginLeft: 'auto'
+                        fontSize: isCondensed ? '0.7rem' : '0.8rem'
                       }}
                     >
-                      {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
+                      {member.name}
                     </Typography>
                   </Box>
-                </StyledAccordionSummary>
-                <StyledAccordionDetails condensed={isCondensed}>
-                  <TableContainer 
-                    component={Paper} 
-                    variant="outlined"
-                    sx={{
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '4px',
-                      overflow: 'hidden',
+                  <Typography 
+                    variant="subtitle1"
+                    color={member.isCut ? 'error' : 'white'}
+                    sx={{ 
+                      fontWeight: 'bold',
+                      minWidth: 'fit-content',
+                      marginLeft: 'auto'
                     }}
                   >
-                    <Table size={isCondensed ? "small" : "medium"}>
-                      <TableHead>
-                        <TableRow sx={{ backgroundColor: '#006747' }}>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
-                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                    {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
+                  </Typography>
+                </Box>
+              </StyledAccordionSummary>
+              <StyledAccordionDetails condensed={isCondensed}>
+                <TableContainer 
+                  component={Paper} 
+                  variant="outlined"
+                  sx={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Table size={isCondensed ? "small" : "medium"}>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: '#006747' }}>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {member.picks.map((golfer) => (
+                        <TableRow 
+                          key={golfer.id}
+                          sx={{ 
+                            backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
+                            '&:nth-of-type(odd)': {
+                              backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
+                            },
+                            transition: 'background-color 0.2s ease-in-out',
+                            '&:hover': {
+                              backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
+                            },
+                          }}
+                        >
+                          <TableCell>{golfer.group}</TableCell>
+                          <TableCell component="th" scope="row">
+                            <Typography sx={{ 
+                              fontWeight: 500,
+                              fontSize: isCondensed ? '0.7rem' : '0.8rem'
+                            }}>
+                              {golfer.name}
+                            </Typography>
+                          </TableCell>
+                          <ThruCell align="center">
+                            {golfer.thru}
+                          </ThruCell>
+                          <ScoreCell align="center" score={golfer.rounds.round1}>
+                            {formatScore(golfer.rounds.round1)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round2}>
+                            {formatScore(golfer.rounds.round2)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round3}>
+                            {formatScore(golfer.rounds.round3)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round4}>
+                            {formatScore(golfer.rounds.round4)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.total}>
+                            {formatScore(golfer.total)}
+                          </ScoreCell>
+                          <TableCell align="center">
+                            {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
+                          </TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {[...member.picks]
-                          .sort((a, b) => {
-                            if (sortByScore) {
-                              return a.total - b.total;
-                            }
-                            return a.group - b.group;
-                          })
-                          .map((golfer) => (
-                            <TableRow 
-                              key={golfer.id}
-                              sx={{ 
-                                backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
-                                '&:nth-of-type(odd)': {
-                                  backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
-                                },
-                                transition: 'background-color 0.2s ease-in-out',
-                                '&:hover': {
-                                  backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
-                                },
-                              }}
-                            >
-                              <TableCell>{golfer.group}</TableCell>
-                              <TableCell component="th" scope="row">
-                                <Typography sx={{ 
-                                  fontWeight: 500,
-                                  fontSize: isCondensed ? '0.7rem' : '0.8rem'
-                                }}>
-                                  {golfer.name}
-                                </Typography>
-                              </TableCell>
-                              <ThruCell align="center">
-                                {golfer.thru}
-                              </ThruCell>
-                              <ScoreCell align="center" score={golfer.rounds.round1}>
-                                {formatScore(golfer.rounds.round1)}
-                              </ScoreCell>
-                              <ScoreCell align="center" score={golfer.rounds.round2}>
-                                {formatScore(golfer.rounds.round2)}
-                              </ScoreCell>
-                              <ScoreCell align="center" score={golfer.rounds.round3}>
-                                {formatScore(golfer.rounds.round3)}
-                              </ScoreCell>
-                              <ScoreCell align="center" score={golfer.rounds.round4}>
-                                {formatScore(golfer.rounds.round4)}
-                              </ScoreCell>
-                              <TotalCell align="center" score={golfer.total}>
-                                {formatScore(golfer.total)}
-                              </TotalCell>
-                              <TableCell align="center">
-                                {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </StyledAccordionDetails>
-              </StyledAccordion>
-            ))}
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </StyledAccordionDetails>
+            </StyledAccordion>
+          ))}
         </Box>
       </ScrollableContent>
     </>
@@ -725,20 +749,12 @@ function sortByScore(a: GolferScore, b: GolferScore): number {
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sortByScore, setSortByScore] = useState(false);
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleTabChange = (newValue: number) => {
-    setActiveTab(newValue);
-    handleMenuClose();
+    if (newValue !== null) {
+      setActiveTab(newValue);
+    }
   };
 
   const handleSortToggle = () => {
@@ -774,14 +790,49 @@ function App() {
         right: 20, 
         zIndex: 1000,
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderRadius: '50%',
+        padding: '8px 16px',
+        borderRadius: '4px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        '&:hover': {
-          backgroundColor: 'rgba(255, 255, 255, 1)',
-        }
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
       }}>
+        <ToggleButtonGroup
+          value={activeTab}
+          exclusive
+          onChange={(_, newValue) => handleTabChange(newValue)}
+          sx={{
+            '& .MuiToggleButton-root': {
+              color: '#006747',
+              '&.Mui-selected': {
+                backgroundColor: '#006747',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#005238',
+                },
+              },
+              '&:hover': {
+                backgroundColor: 'rgba(0, 103, 71, 0.1)',
+              },
+            },
+          }}
+        >
+          <ToggleButton value={0}>
+            <LeaderboardIcon sx={{ mr: 1 }} />
+            Leaderboard
+          </ToggleButton>
+          <ToggleButton value={1}>
+            <HistoryIcon sx={{ mr: 1 }} />
+            History
+          </ToggleButton>
+          <ToggleButton value={2}>
+            <SortByAlphaIcon sx={{ mr: 1 }} />
+            Picks
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <Divider orientation="vertical" flexItem />
         <IconButton
-          onClick={handleMenuClick}
+          onClick={handleSortToggle}
           sx={{ 
             color: '#006747',
             '&:hover': {
@@ -789,60 +840,8 @@ function App() {
             }
           }}
         >
-          <MenuIcon />
+          {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
         </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          PaperProps={{
-            sx: {
-              minWidth: 200,
-              '& .MuiMenuItem-root': {
-                color: '#006747',
-                '&.Mui-selected': {
-                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
-                  fontWeight: 'bold',
-                },
-              },
-            },
-          }}
-        >
-          <MenuItem 
-            onClick={() => handleTabChange(0)}
-            selected={activeTab === 0}
-          >
-            Leaderboard
-          </MenuItem>
-          <MenuItem 
-            onClick={() => handleTabChange(1)}
-            selected={activeTab === 1}
-          >
-            History
-          </MenuItem>
-          <MenuItem 
-            onClick={() => handleTabChange(2)}
-            selected={activeTab === 2}
-          >
-            Picks
-          </MenuItem>
-          <Divider />
-          <MenuItem 
-            onClick={handleSortToggle}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
-            <ListItemIcon>
-              {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
-            </ListItemIcon>
-            <ListItemText>
-              {sortByScore ? 'Sort by Group' : 'Sort by Score'}
-            </ListItemText>
-          </MenuItem>
-        </Menu>
       </Box>
       <LeaderboardContainer>
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
