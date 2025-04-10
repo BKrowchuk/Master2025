@@ -780,27 +780,6 @@ function App() {
       <Box sx={{ 
         position: 'fixed', 
         top: 20, 
-        left: 20, 
-        zIndex: 1000,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        padding: '8px 16px',
-        borderRadius: '4px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
-      }}>
-        <Typography variant="h6" sx={{ 
-          color: '#006747', 
-          fontWeight: 'bold',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-        }}>
-          {activeTab === 0 ? 'Leaderboard' : activeTab === 1 ? 'History' : 'Picks'}
-        </Typography>
-      </Box>
-      <Box sx={{ 
-        position: 'fixed', 
-        top: 20, 
         right: 20, 
         zIndex: 1000,
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -863,7 +842,7 @@ function App() {
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
         </Box>
-          </LeaderboardContainer>
+      </LeaderboardContainer>
     </AppContainer>
   );
 }
