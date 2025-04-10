@@ -23,7 +23,7 @@ import { mockGolfers } from './mockGolfers';
 const findGolferByName = (name: string): GolferScore | undefined => {
   const golfer = mockGolfers.find(golfer => golfer.name === name);
   if (!golfer) {
-    console.warn(`Golfer not found: ${name}`);
+    // console.warn(`Golfer not found: ${name}`);
     // console.log('Mock golfers:', mockGolfers);
   }
   return golfer;

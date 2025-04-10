@@ -1,16 +1,17 @@
 export interface GolferScore {
   id: string;
   name: string;
+  group: number;
   rounds: {
     round1: number | null;
     round2: number | null;
     round3: number | null;
     round4: number | null;
   };
-  total: number;
-  position: number | 'CUT';
+  total: number | null;
+  position: number;
   madeCut: boolean;
-  group: number;
+  thru: string;
 }
 
 export interface PoolMember {

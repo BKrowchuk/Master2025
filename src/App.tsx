@@ -618,6 +618,7 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                         <TableRow sx={{ backgroundColor: '#006747' }}>
                           <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
                           <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
                           <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
                           <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
                           <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
@@ -657,6 +658,9 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                                   {golfer.name}
                                 </Typography>
                               </TableCell>
+                              <ScoreCell align="center" score={golfer.thru}>
+                                {golfer.thru}
+                              </ScoreCell>
                               <ScoreCell align="center" score={golfer.rounds.round1}>
                                 {formatScore(golfer.rounds.round1)}
                               </ScoreCell>

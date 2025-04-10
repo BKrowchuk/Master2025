@@ -1,15 +1,19 @@
 import consoleData from './ConsoleData.json';
 
 export interface MastersPlayer {
-  name: string;
   position: string;
-  round1: number;
-  round2: number;
-  round3: number | null;
-  round4: number | null;
-  total: number;
-  fedexPoints: number;
-  prizeMoney: string;
+  playerName: string;
+  total: number | null;
+  thru: string;
+  round: string;
+  r1: number | null;
+  r2: number | null;
+  r3: number | null;
+  r4: number | null;
+  strokes: number | null;
+  proj: number | null;
+  starting: number | null;
+  oddsToWin: string;
 }
 
 // Function to parse score string to number
@@ -50,17 +54,20 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     
     // Skip rows that are just empty strings
     if (row.length === 1 && row[0] === "") continue;
-    
     const player: MastersPlayer = {
-      name: row[1].replace("\n\n(a)", " (a)").replace("Å", "A").replace("å", "a").replace("ø", "o").replace("Ø", "O"), // Clean up amateur designation and special characters
       position: row[0],
-      round1: parseScore(row[2]) || 0,
-      round2: parseScore(row[3]) || 0,
-      round3: parseScore(row[4]),
-      round4: parseScore(row[5]),
-      total: parseScore(row[6]) || 0,
-      fedexPoints: parseFedExPoints(row[7]),
-      prizeMoney: parsePrizeMoney(row[8])
+      playerName: row[2],
+      total: parseScore(row[3]),
+      thru: row[4],
+      round: row[5],
+      r1: parseScore(row[6]),
+      r2: parseScore(row[7]),
+      r3: parseScore(row[8]),
+      r4: parseScore(row[9]),
+      strokes: parseScore(row[10]),
+      proj: parseScore(row[11]),
+      starting: parseScore(row[12]),
+      oddsToWin: row[14]
     };
     
     leaderboard.push(player);
