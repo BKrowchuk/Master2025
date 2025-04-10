@@ -11,8 +11,8 @@ export const mockGolfers: GolferScore[] = mastersLeaderboard.map((player, index)
     round3: player.r3 ? Number(player.r3) : null,
     round4: player.r4 ? Number(player.r4) : null
   },
-  total: player.total ? Number(player.total) : null,
-  position: player.position === 'CUT' ? 999 : Number(player.position.replace('T', '')),
-  madeCut: player.position !== 'CUT',
+  total: typeof player.total === 'string' ? "WD" : (typeof player.total === 'number' ? player.total : null),
+  position: typeof player.total === 'string' && player.total === "WD" ? "WD" : (player.position === 'CUT' ? 'CUT' : Number(player.position.replace('T', ''))),
+  madeCut: player.position !== 'CUT' && !(typeof player.total === 'string' && player.total === "WD"),
   thru: player.thru || '-'
 })); 

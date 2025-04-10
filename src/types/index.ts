@@ -8,8 +8,8 @@ export interface GolferScore {
     round3: number | null;
     round4: number | null;
   };
-  total: number | null;
-  position: number;
+  total: number | 'WD' | null;
+  position: number | 'WD' | 'CUT';
   madeCut: boolean;
   thru: string;
 }
@@ -30,13 +30,17 @@ export interface PoolMember {
 }
 
 export interface MastersPlayer {
-  name: string;
-  position: number | 'CUT';
-  round1: number | null;
-  round2: number | null;
-  round3: number | null;
-  round4: number | null;
-  total: number;
-  fedexPoints: number;
-  prizeMoney: number;
+  position: string;
+  playerName: string;
+  total: number | string | null;
+  thru: string;
+  round: string;
+  r1: number | null;
+  r2: number | null;
+  r3: number | null;
+  r4: number | null;
+  strokes: number | null;
+  proj: number | null;
+  starting: number | null;
+  oddsToWin: string;
 } 

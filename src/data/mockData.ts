@@ -21,11 +21,30 @@ import { mockGolfers } from './mockGolfers';
 
 // Function to find a golfer in mockGolfers by name
 const findGolferByName = (name: string): GolferScore | undefined => {
-  const golfer = mockGolfers.find(golfer => golfer.name === name);
+  // Clean the input name
+  const cleanInputName = name.trim().toLowerCase();
+  
+  // Try exact match first
+  let golfer = mockGolfers.find(g => g.name.toLowerCase() === cleanInputName);
+  
   if (!golfer) {
-    // console.warn(`Golfer not found: ${name}`);
-    // console.log('Mock golfers:', mockGolfers);
+    // Try matching without (a) suffix
+    const nameWithoutSuffix = cleanInputName.replace(/\s*\(a\)\s*/g, '');
+    golfer = mockGolfers.find(g => {
+      const cleanGolferName = g.name.toLowerCase().replace(/\s*\(a\)\s*/g, '');
+      return cleanGolferName === nameWithoutSuffix;
+    });
   }
+  
+  if (!golfer) {
+    // Try matching with any suffix
+    const nameBase = cleanInputName.replace(/\s*\([^)]*\)\s*/g, '').trim();
+    golfer = mockGolfers.find(g => {
+      const golferNameBase = g.name.toLowerCase().replace(/\s*\([^)]*\)\s*/g, '').trim();
+      return golferNameBase === nameBase;
+    });
+  }
+  
   return golfer;
 };
 

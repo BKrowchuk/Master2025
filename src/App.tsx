@@ -38,6 +38,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import { mockPoolMembers } from './data/mockData';
 import { pastResults } from './data/pastResults';
+import { GolferScore } from './types';
 
 const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, condensed }) => ({
   marginBottom: condensed ? theme.spacing(0.5) : theme.spacing(1),
@@ -110,12 +111,24 @@ const StyledAccordionDetails = styled(AccordionDetails)<{ condensed?: boolean }>
   },
 }));
 
-const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
-  color: score === null ? 'inherit' : 
-         score > 0 ? '#2e7d32' : // Green for positive numbers
-         score < 0 ? '#d32f2f' : // Red for negative numbers
-         'black', // Black for zero
-  fontWeight: 500,
+const ScoreCell = styled(TableCell)<{ score?: number | 'WD' | null }>(({ theme, score }) => ({
+  color: !score ? 'inherit' :
+         score === 'WD' ? '#999999' :
+         typeof score === 'number' ? (
+           score < 72 ? '#C41E3A' : // Red for negative scores
+           score > 72 ? '#006747' : // Green for positive scores
+           'inherit'
+         ) : 'inherit',
+}));
+
+const TotalCell = styled(TableCell)<{ score?: number | 'WD' | null }>(({ theme, score }) => ({
+  color: !score ? 'inherit' :
+         score === 'WD' ? '#999999' :
+         typeof score === 'number' ? (
+           score < 0 ? '#C41E3A' : // Red for negative scores
+           score > 0 ? '#006747' : // Green for positive scores
+           'inherit'
+         ) : 'inherit',
 }));
 
 const ThruCell = styled(TableCell)({
@@ -245,8 +258,9 @@ const NavigationButtons = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-function formatScore(score: number | null): string {
+function formatScore(score: number | 'WD' | null): string {
   if (score === null) return '-';
+  if (score === 'WD') return 'WD';
   return score.toString();
 }
 
@@ -678,11 +692,11 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                               <ScoreCell align="center" score={golfer.rounds.round4}>
                                 {formatScore(golfer.rounds.round4)}
                               </ScoreCell>
-                              <ScoreCell align="center" score={golfer.total}>
+                              <TotalCell align="center" score={golfer.total}>
                                 {formatScore(golfer.total)}
-                              </ScoreCell>
+                              </TotalCell>
                               <TableCell align="center">
-                                {golfer.madeCut ? golfer.position : 'CUT'}
+                                {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -697,6 +711,17 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
     </>
   );
 };
+
+// Sort by score function
+function sortByScore(a: GolferScore, b: GolferScore): number {
+  if (a.total === 'WD' && b.total === 'WD') return 0;
+  if (a.total === 'WD') return 1;
+  if (b.total === 'WD') return -1;
+  if (a.total === null && b.total === null) return 0;
+  if (a.total === null) return 1;
+  if (b.total === null) return -1;
+  return (a.total as number) - (b.total as number);
+}
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);

@@ -37,8 +37,12 @@ function parseFedExPoints(points: string): number {
 
 // Function to clean player name
 function cleanPlayerName(name: string): string {
-  // Remove newlines and extra spaces
-  return name.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
+  // Remove newlines and extra spaces, and ensure (a) is properly formatted
+  return name
+    .replace(/\n/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*\(a\)\s*/g, ' (a)')
+    .trim();
 }
 
 // Function to parse the console data and populate the leaderboard
@@ -62,7 +66,7 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     if (row.length === 1 && row[0] === "") continue;
     const player: MastersPlayer = {
       position: row[0],
-      playerName: cleanPlayerName(row[15]),
+      playerName: cleanPlayerName(row[2]),
       total: parseScore(row[3]),
       thru: row[4],
       round: row[5],
@@ -83,4 +87,21 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
 }
 
 // Initialize the leaderboard with the console data
-export const mastersLeaderboard: MastersPlayer[] = populateLeaderboardFromConsoleData(consoleData); 
+export const mastersLeaderboard: MastersPlayer[] = [
+  ...populateLeaderboardFromConsoleData(consoleData),
+  {
+    position: "WD",
+    playerName: "Vijay Singh",
+    total: "WD",
+    thru: "WD",
+    round: "WD",
+    r1: null,
+    r2: null,
+    r3: null,
+    r4: null,
+    strokes: null,
+    proj: null,
+    starting: null,
+    oddsToWin: "WD"
+  }
+]; 
