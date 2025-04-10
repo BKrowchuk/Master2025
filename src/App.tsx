@@ -352,18 +352,18 @@ function PastResults() {
                     </TableCell>
                     <TableCell>
                       {result.runnerUp && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography>🥈</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography>🥈</Typography>
                           <Typography>{result.runnerUp}</Typography>
-                        </Box>
+                      </Box>
                       )}
                     </TableCell>
                     <TableCell>
                       {result.coRunnerUp && (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Typography>🥈</Typography>
                           <Typography>{result.coRunnerUp}</Typography>
-                        </Box>
+                      </Box>
                       )}
                     </TableCell>
                     <TableCell>
@@ -605,22 +605,22 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
 
   return (
     <>
-      <ScrollableContent>
+            <ScrollableContent>
         <Box sx={{ pt: 0, pb: 0 }}>
           {sortedGolfers.map((member) => (
-            <StyledAccordion
-              key={member.id}
-              expanded={expanded === member.id}
-              onChange={handleChange(member.id)}
-              condensed={isCondensed}
-            >
-              <StyledAccordionSummary 
-                expandIcon={<ExpandMoreIcon />}
-                condensed={isCondensed}
-              >
-                <Box sx={{ 
-                  display: 'flex', 
-                  width: '100%', 
+                    <StyledAccordion
+                      key={member.id}
+                      expanded={expanded === member.id}
+                      onChange={handleChange(member.id)}
+                      condensed={isCondensed}
+                    >
+                      <StyledAccordionSummary 
+                        expandIcon={<ExpandMoreIcon />}
+                        condensed={isCondensed}
+                      >
+                        <Box sx={{ 
+                          display: 'flex', 
+                          width: '100%', 
                   alignItems: 'center',
                   gap: 2
                 }}>
@@ -640,6 +640,18 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                       {member.name}
                     </Typography>
                   </Box>
+                  {/* TODO: Add round positions back in */}
+                  {/* <Typography 
+                    variant="subtitle2"
+                    sx={{ 
+                      color: 'white',
+                      fontSize: isCondensed ? '0.65rem' : '0.75rem',
+                      opacity: 0.8,
+                      minWidth: 'fit-content'
+                    }}
+                  >
+                    Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
+                  </Typography> */}
                   <Typography 
                     variant="subtitle1"
                     color={member.isCut ? 'error' : 'white'}
@@ -651,87 +663,87 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                   >
                     {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
                   </Typography>
-                </Box>
-              </StyledAccordionSummary>
-              <StyledAccordionDetails condensed={isCondensed}>
-                <TableContainer 
-                  component={Paper} 
-                  variant="outlined"
-                  sx={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <Table size={isCondensed ? "small" : "medium"}>
-                    <TableHead>
-                      <TableRow sx={{ backgroundColor: '#006747' }}>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {member.picks.map((golfer) => (
-                        <TableRow 
-                          key={golfer.id}
-                          sx={{ 
-                            backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
-                            '&:nth-of-type(odd)': {
-                              backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
-                            },
-                            transition: 'background-color 0.2s ease-in-out',
-                            '&:hover': {
-                              backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
-                            },
+                        </Box>
+                      </StyledAccordionSummary>
+                      <StyledAccordionDetails condensed={isCondensed}>
+                        <TableContainer 
+                          component={Paper} 
+                          variant="outlined"
+                          sx={{
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '4px',
+                            overflow: 'hidden',
                           }}
                         >
+                          <Table size={isCondensed ? "small" : "medium"}>
+                            <TableHead>
+                              <TableRow sx={{ backgroundColor: '#006747' }}>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                      {member.picks.map((golfer) => (
+                                  <TableRow 
+                                    key={golfer.id}
+                                    sx={{ 
+                                      backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
+                                      '&:nth-of-type(odd)': {
+                                        backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
+                                      },
+                                      transition: 'background-color 0.2s ease-in-out',
+                                      '&:hover': {
+                                        backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
+                                      },
+                                    }}
+                                  >
                           <TableCell>{golfer.group}</TableCell>
-                          <TableCell component="th" scope="row">
+                                    <TableCell component="th" scope="row">
                             <Typography sx={{ 
                               fontWeight: 500,
                               fontSize: isCondensed ? '0.7rem' : '0.8rem'
                             }}>
-                              {golfer.name}
-                            </Typography>
-                          </TableCell>
+                                        {golfer.name}
+                                      </Typography>
+                                    </TableCell>
                           <ThruCell align="center">
                             {golfer.thru}
                           </ThruCell>
-                          <ScoreCell align="center" score={golfer.rounds.round1}>
-                            {formatScore(golfer.rounds.round1)}
-                          </ScoreCell>
-                          <ScoreCell align="center" score={golfer.rounds.round2}>
-                            {formatScore(golfer.rounds.round2)}
-                          </ScoreCell>
-                          <ScoreCell align="center" score={golfer.rounds.round3}>
-                            {formatScore(golfer.rounds.round3)}
-                          </ScoreCell>
-                          <ScoreCell align="center" score={golfer.rounds.round4}>
-                            {formatScore(golfer.rounds.round4)}
-                          </ScoreCell>
-                          <ScoreCell align="center" score={golfer.total}>
-                            {formatScore(golfer.total)}
-                          </ScoreCell>
-                          <TableCell align="center">
+                                    <ScoreCell align="center" score={golfer.rounds.round1}>
+                                      {formatScore(golfer.rounds.round1)}
+                                    </ScoreCell>
+                                    <ScoreCell align="center" score={golfer.rounds.round2}>
+                                      {formatScore(golfer.rounds.round2)}
+                                    </ScoreCell>
+                                    <ScoreCell align="center" score={golfer.rounds.round3}>
+                                      {formatScore(golfer.rounds.round3)}
+                                    </ScoreCell>
+                                    <ScoreCell align="center" score={golfer.rounds.round4}>
+                                      {formatScore(golfer.rounds.round4)}
+                                    </ScoreCell>
+                                    <ScoreCell align="center" score={golfer.total}>
+                                      {formatScore(golfer.total)}
+                                    </ScoreCell>
+                                    <TableCell align="center">
                             {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </StyledAccordionDetails>
-            </StyledAccordion>
-          ))}
-        </Box>
-      </ScrollableContent>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </StyledAccordionDetails>
+                    </StyledAccordion>
+                  ))}
+              </Box>
+            </ScrollableContent>
     </>
   );
 };
@@ -849,7 +861,7 @@ function App() {
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
         </Box>
-      </LeaderboardContainer>
+          </LeaderboardContainer>
     </AppContainer>
   );
 }
