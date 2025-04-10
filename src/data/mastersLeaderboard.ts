@@ -3,7 +3,7 @@ import consoleData from './ConsoleData.json';
 export interface MastersPlayer {
   position: string;
   playerName: string;
-  total: number | null;
+  total: number | null | 'WD';
   thru: string;
   round: string;
   r1: number | null;

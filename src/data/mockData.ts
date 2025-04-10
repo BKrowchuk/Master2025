@@ -105,14 +105,25 @@ try {
 // Helper function to get best 8 players for a pool member
 function getBestEightPlayers(picks: GolferScore[]): GolferScore[] {
   return picks
-    .sort((a, b) => a.total - b.total)
+    .sort((a, b) => {
+      if (a.total === 'WD' && b.total === 'WD') return 0;
+      if (a.total === 'WD') return 1;
+      if (b.total === 'WD') return -1;
+      if (a.total === null && b.total === null) return 0;
+      if (a.total === null) return 1;
+      if (b.total === null) return -1;
+      return (a.total as number) - (b.total as number);
+    })
     .slice(0, 8);
 }
 
 // Helper function to calculate best eight total
 function calculateBestEightTotal(picks: GolferScore[]): number {
   return getBestEightPlayers(picks)
-    .reduce((sum, golfer) => sum + golfer.total, 0);
+    .reduce((sum, golfer) => {
+      if (golfer.total === 'WD' || golfer.total === null) return sum;
+      return sum + golfer.total;
+    }, 0);
 }
 
 // Helper function to check if a pool member is cut
@@ -122,6 +133,7 @@ function isPoolMemberCut(picks: GolferScore[]): boolean {
 }
 
 // Calculate positions for all pool members for a specific round
+// TODO: Add round positions back in
 function calculateRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): { [key: string]: number | 'CUT' } {
   // Filter out cut pool members
   const activePoolMembers = poolMembers.filter(member => !isPoolMemberCut(member.picks));

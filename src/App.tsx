@@ -730,9 +730,9 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                                     <ScoreCell align="center" score={golfer.rounds.round4}>
                                       {formatScore(golfer.rounds.round4)}
                                     </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.total}>
+                                    <TotalCell align="center" score={golfer.total}>
                                       {formatScore(golfer.total)}
-                                    </ScoreCell>
+                                    </TotalCell>
                                     <TableCell align="center">
                             {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
                                     </TableCell>
@@ -782,21 +782,24 @@ function App() {
         top: 20, 
         right: 20, 
         zIndex: 1000,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        padding: '8px 16px',
-        borderRadius: '4px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '4px 8px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
         display: 'flex',
         alignItems: 'center',
-        gap: 2,
+        gap: 1,
+        border: '1px solid rgba(0, 0, 0, 0.1)'
       }}>
         <ToggleButtonGroup
           value={activeTab}
           exclusive
           onChange={(_, newValue) => handleTabChange(newValue)}
+          size="small"
           sx={{
             '& .MuiToggleButton-root': {
               color: '#006747',
+              padding: '4px 8px',
               '&.Mui-selected': {
                 backgroundColor: '#006747',
                 color: 'white',
