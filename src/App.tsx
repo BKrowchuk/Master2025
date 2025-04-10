@@ -713,81 +713,104 @@ function App() {
 
   return (
     <AppContainer>
-      <LeaderboardContainer>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          p: 1,
-          borderBottom: '1px solid #e0e0e0'
+      <Box sx={{ 
+        position: 'fixed', 
+        top: 20, 
+        left: 20, 
+        zIndex: 1000,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        padding: '8px 16px',
+        borderRadius: '4px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+      }}>
+        <Typography variant="h6" sx={{ 
+          color: '#006747', 
+          fontWeight: 'bold',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
         }}>
-          <Typography variant="h6" sx={{ color: '#006747', fontWeight: 'bold' }}>
-            {activeTab === 0 ? 'Leaderboard' : activeTab === 1 ? 'History' : 'Picks'}
-          </Typography>
-          <IconButton
-            onClick={handleMenuClick}
-            sx={{ 
-              color: '#006747',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 103, 71, 0.1)',
-              }
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            PaperProps={{
-              sx: {
-                minWidth: 200,
-                '& .MuiMenuItem-root': {
-                  color: '#006747',
-                  '&.Mui-selected': {
-                    backgroundColor: 'rgba(0, 103, 71, 0.1)',
-                    fontWeight: 'bold',
-                  },
+          {activeTab === 0 ? 'Leaderboard' : activeTab === 1 ? 'History' : 'Picks'}
+        </Typography>
+      </Box>
+      <Box sx={{ 
+        position: 'fixed', 
+        top: 20, 
+        right: 20, 
+        zIndex: 1000,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: '50%',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          backgroundColor: 'rgba(255, 255, 255, 1)',
+        }
+      }}>
+        <IconButton
+          onClick={handleMenuClick}
+          sx={{ 
+            color: '#006747',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 103, 71, 0.1)',
+            }
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          PaperProps={{
+            sx: {
+              minWidth: 200,
+              '& .MuiMenuItem-root': {
+                color: '#006747',
+                '&.Mui-selected': {
+                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                  fontWeight: 'bold',
                 },
               },
+            },
+          }}
+        >
+          <MenuItem 
+            onClick={() => handleTabChange(0)}
+            selected={activeTab === 0}
+          >
+            Leaderboard
+          </MenuItem>
+          <MenuItem 
+            onClick={() => handleTabChange(1)}
+            selected={activeTab === 1}
+          >
+            History
+          </MenuItem>
+          <MenuItem 
+            onClick={() => handleTabChange(2)}
+            selected={activeTab === 2}
+          >
+            Picks
+          </MenuItem>
+          <Divider />
+          <MenuItem 
+            onClick={handleSortToggle}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
             }}
           >
-            <MenuItem 
-              onClick={() => handleTabChange(0)}
-              selected={activeTab === 0}
-            >
-              Leaderboard
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleTabChange(1)}
-              selected={activeTab === 1}
-            >
-              History
-            </MenuItem>
-            <MenuItem 
-              onClick={() => handleTabChange(2)}
-              selected={activeTab === 2}
-            >
-              Picks
-            </MenuItem>
-            <Divider />
-            <MenuItem 
-              onClick={handleSortToggle}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              <ListItemIcon>
-                {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
-              </ListItemIcon>
-              <ListItemText>
-                {sortByScore ? 'Sort by Group' : 'Sort by Score'}
-              </ListItemText>
-            </MenuItem>
-          </Menu>
-        </Box>
+            <ListItemIcon>
+              {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
+            </ListItemIcon>
+            <ListItemText>
+              {sortByScore ? 'Sort by Group' : 'Sort by Score'}
+            </ListItemText>
+          </MenuItem>
+        </Menu>
+      </Box>
+      <LeaderboardContainer>
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
           {activeTab === 0 && <Leaderboard sortByScore={sortByScore} />}
           {activeTab === 1 && <PastResults />}
