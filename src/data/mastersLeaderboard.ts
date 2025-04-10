@@ -35,6 +35,12 @@ function parseFedExPoints(points: string): number {
   return parseFloat(points);
 }
 
+// Function to clean player name
+function cleanPlayerName(name: string): string {
+  // Remove newlines and extra spaces
+  return name.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
+}
+
 // Function to parse the console data and populate the leaderboard
 export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersPlayer[] {
   const leaderboard: MastersPlayer[] = [];
@@ -56,7 +62,7 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     if (row.length === 1 && row[0] === "") continue;
     const player: MastersPlayer = {
       position: row[0],
-      playerName: row[2],
+      playerName: cleanPlayerName(row[15]),
       total: parseScore(row[3]),
       thru: row[4],
       round: row[5],
