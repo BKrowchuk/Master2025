@@ -19,12 +19,23 @@ import {
   Tooltip,
   ToggleButtonGroup,
   ToggleButton,
+  Tabs,
+  Tab,
+  TextField,
+  InputAdornment,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryIcon from '@mui/icons-material/History';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import SortIcon from '@mui/icons-material/Sort';
+import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
 import { mockPoolMembers } from './data/mockData';
 import { pastResults } from './data/pastResults';
 
@@ -365,11 +376,177 @@ function PastResults() {
   );
 }
 
-function App() {
+const PicksTable = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Get all unique groups
+  const groups = Array.from(new Set(mockPoolMembers.flatMap(member => 
+    member.picks.map(pick => pick.group)
+  ))).sort((a, b) => a - b);
+
+  // Filter pool members based on search term
+  const filteredMembers = mockPoolMembers.filter(member => {
+    const memberName = member.name.toLowerCase();
+    const picks = member.picks.map(pick => pick.name.toLowerCase());
+    return memberName.includes(searchTerm.toLowerCase()) || 
+           picks.some(pick => pick.includes(searchTerm.toLowerCase()));
+  });
+
+  return (
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ p: 1 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search pool members or golfers..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            sx: {
+              backgroundColor: 'white',
+              borderRadius: '4px',
+            }
+          }}
+          size="small"
+          sx={{ mb: 1 }}
+        />
+      </Box>
+      <ScrollableContent>
+        <Box sx={{ px: 1, pb: 1, pl: 0 }}>
+          <TableContainer 
+            component={Paper} 
+            variant="outlined"
+            sx={{
+              border: '1px solid #e0e0e0',
+              borderRadius: '4px',
+              maxWidth: '100%',
+              height: 'calc(100% - 16px)',
+              margin: '0px 8px',
+              overflow: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '8px',
+                height: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#006747',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: '#005238',
+                },
+              },
+              '&::-webkit-scrollbar-corner': {
+                background: '#f1f1f1',
+              },
+            }}
+          >
+            <Table 
+              size="small" 
+              stickyHeader 
+              sx={{ 
+                minWidth: 'max-content',
+              }}
+            >
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#006747' }}>
+                  <TableCell sx={{ 
+                    fontWeight: 'bold', 
+                    color: 'white', 
+                    padding: '6px 8px', 
+                    position: 'sticky', 
+                    left: 0, 
+                    zIndex: 3, 
+                    backgroundColor: '#006747',
+                    minWidth: '180px',
+                    whiteSpace: 'nowrap',
+                  }}>Pool Member</TableCell>
+                  {groups.map(group => (
+                    <TableCell key={group} sx={{ 
+                      fontWeight: 'bold', 
+                      color: 'white', 
+                      padding: '6px 8px', 
+                      textAlign: 'center',
+                      minWidth: '150px',
+                      whiteSpace: 'nowrap',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 2,
+                      backgroundColor: '#006747',
+                    }}>
+                      Group {group}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredMembers
+                  .sort((a, b) => parseInt(a.id) - parseInt(b.id))
+                  .map((member, index) => (
+                    <TableRow 
+                      key={member.id}
+                      sx={{ 
+                        '&:nth-of-type(odd)': {
+                          backgroundColor: '#fafafa',
+                        },
+                        '&:nth-of-type(even)': {
+                          backgroundColor: 'white',
+                        },
+                      }}
+                    >
+                      <TableCell 
+                        sx={{ 
+                          padding: '6px 8px',
+                          fontWeight: 'bold',
+                          borderRight: '1px solid #e0e0e0',
+                          position: 'sticky',
+                          left: 0,
+                          zIndex: 2,
+                          backgroundColor: index % 2 === 0 ? '#fafafa' : 'white',
+                          minWidth: '180px',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {member.name}
+                        </Typography>
+                      </TableCell>
+                      {groups.map(group => {
+                        const pick = member.picks.find(p => p.group === group);
+                        return (
+                          <TableCell key={`${member.id}-${group}`} sx={{ 
+                            padding: '6px 8px', 
+                            textAlign: 'center',
+                            minWidth: '150px',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              {pick ? pick.name : '-'}
+                            </Typography>
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </ScrollableContent>
+    </Box>
+  );
+};
+
+const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [isCondensed, setIsCondensed] = useState(true);
-  const [view, setView] = useState<'current' | 'past'>('current');
-  const [sortByScore, setSortByScore] = useState(false);
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
@@ -379,227 +556,244 @@ function App() {
     setIsCondensed(!isCondensed);
   };
 
-  const handleViewChange = (event: React.MouseEvent<HTMLElement>, newView: 'current' | 'past') => {
-    if (newView !== null) {
-      setView(newView);
-    }
+  return (
+    <>
+      <ScrollableContent>
+        <Box sx={{ pt: 0, pb: 0 }}>
+          {mockPoolMembers
+            .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal)
+            .map((member) => (
+              <StyledAccordion
+                key={member.id}
+                expanded={expanded === member.id}
+                onChange={handleChange(member.id)}
+                condensed={isCondensed}
+              >
+                <StyledAccordionSummary 
+                  expandIcon={<ExpandMoreIcon />}
+                  condensed={isCondensed}
+                >
+                  <Box sx={{ 
+                    display: 'flex', 
+                    width: '100%', 
+                    alignItems: 'center',
+                    gap: 2
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
+                      <Typography 
+                        variant="subtitle1"
+                        sx={{ 
+                          fontWeight: 'bold',
+                          fontSize: isCondensed ? '0.7rem' : '0.8rem'
+                        }}
+                      >
+                        {member.name}
+                      </Typography>
+                    </Box>
+                    <Typography 
+                      variant="subtitle1"
+                      color={member.isCut ? 'error' : 'white'}
+                      sx={{ 
+                        fontWeight: 'bold',
+                        minWidth: 'fit-content',
+                        marginLeft: 'auto'
+                      }}
+                    >
+                      {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
+                    </Typography>
+                  </Box>
+                </StyledAccordionSummary>
+                <StyledAccordionDetails condensed={isCondensed}>
+                  <TableContainer 
+                    component={Paper} 
+                    variant="outlined"
+                    sx={{
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Table size={isCondensed ? "small" : "medium"}>
+                      <TableHead>
+                        <TableRow sx={{ backgroundColor: '#006747' }}>
+                          <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
+                          <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {[...member.picks]
+                          .sort((a, b) => {
+                            if (sortByScore) {
+                              return a.total - b.total;
+                            }
+                            return a.group - b.group;
+                          })
+                          .map((golfer) => (
+                            <TableRow 
+                              key={golfer.id}
+                              sx={{ 
+                                backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
+                                '&:nth-of-type(odd)': {
+                                  backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
+                                },
+                                transition: 'background-color 0.2s ease-in-out',
+                                '&:hover': {
+                                  backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
+                                },
+                              }}
+                            >
+                              <TableCell>{golfer.group}</TableCell>
+                              <TableCell component="th" scope="row">
+                                <Typography sx={{ 
+                                  fontWeight: 500,
+                                  fontSize: isCondensed ? '0.7rem' : '0.8rem'
+                                }}>
+                                  {golfer.name}
+                                </Typography>
+                              </TableCell>
+                              <ScoreCell align="center" score={golfer.rounds.round1}>
+                                {formatScore(golfer.rounds.round1)}
+                              </ScoreCell>
+                              <ScoreCell align="center" score={golfer.rounds.round2}>
+                                {formatScore(golfer.rounds.round2)}
+                              </ScoreCell>
+                              <ScoreCell align="center" score={golfer.rounds.round3}>
+                                {formatScore(golfer.rounds.round3)}
+                              </ScoreCell>
+                              <ScoreCell align="center" score={golfer.rounds.round4}>
+                                {formatScore(golfer.rounds.round4)}
+                              </ScoreCell>
+                              <ScoreCell align="center" score={golfer.total}>
+                                {formatScore(golfer.total)}
+                              </ScoreCell>
+                              <TableCell align="center">
+                                {golfer.madeCut ? golfer.position : 'CUT'}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </StyledAccordionDetails>
+              </StyledAccordion>
+            ))}
+        </Box>
+      </ScrollableContent>
+    </>
+  );
+};
+
+function App() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [sortByScore, setSortByScore] = useState(false);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const toggleSortOrder = () => {
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleTabChange = (newValue: number) => {
+    setActiveTab(newValue);
+    handleMenuClose();
+  };
+
+  const handleSortToggle = () => {
     setSortByScore(!sortByScore);
   };
 
   return (
     <AppContainer>
-      {/* <Typography 
-        variant="h4" 
-        component="h1" 
-        gutterBottom 
-        sx={{ 
-          textAlign: 'center', 
-          color: '#006747',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          letterSpacing: '2px',
-          marginBottom: '30px',
-          textShadow: '2px 2px 4px rgba(0, 103, 71, 0.2)',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          padding: '10px 20px',
-          borderRadius: '4px',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
-        Masters 2025 Pool Leaderboard
-      </Typography> */}
-      <NavigationButtons
-        value={view}
-        exclusive
-        onChange={handleViewChange}
-        size="large"
-      >
-        <ToggleButton value="current">
-          <Tooltip title="Current Leaderboard">
-            <LeaderboardIcon />
-          </Tooltip>
-        </ToggleButton>
-        <ToggleButton value="past">
-          <Tooltip title="Past Results">
-            <HistoryIcon />
-          </Tooltip>
-        </ToggleButton>
-      </NavigationButtons>
-      {view === 'current' ? (
-        <>
-          <Box sx={{ position: 'absolute', top: 20, left: 20, zIndex: 1 }}>
-            <Tooltip title={sortByScore ? "Sort by Group" : "Sort by Score"}>
-              <IconButton 
-                onClick={toggleSortOrder}
-                sx={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 1)',
-                  }
-                }}
-              >
+      <LeaderboardContainer>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          p: 1,
+          borderBottom: '1px solid #e0e0e0'
+        }}>
+          <Typography variant="h6" sx={{ color: '#006747', fontWeight: 'bold' }}>
+            {activeTab === 0 ? 'Leaderboard' : activeTab === 1 ? 'History' : 'Picks'}
+          </Typography>
+          <IconButton
+            onClick={handleMenuClick}
+            sx={{ 
+              color: '#006747',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 103, 71, 0.1)',
+              }
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            PaperProps={{
+              sx: {
+                minWidth: 200,
+                '& .MuiMenuItem-root': {
+                  color: '#006747',
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                    fontWeight: 'bold',
+                  },
+                },
+              },
+            }}
+          >
+            <MenuItem 
+              onClick={() => handleTabChange(0)}
+              selected={activeTab === 0}
+            >
+              Leaderboard
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleTabChange(1)}
+              selected={activeTab === 1}
+            >
+              History
+            </MenuItem>
+            <MenuItem 
+              onClick={() => handleTabChange(2)}
+              selected={activeTab === 2}
+            >
+              Picks
+            </MenuItem>
+            <Divider />
+            <MenuItem 
+              onClick={handleSortToggle}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <ListItemIcon>
                 {sortByScore ? <SortIcon /> : <SortByAlphaIcon />}
-              </IconButton>
-            </Tooltip>
-          </Box>
-          <LeaderboardContainer>
-            <ScrollableContent>
-              <Box sx={{ pt: 0, pb: 0 }}>
-                {mockPoolMembers
-                  .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal)
-                  .map((member) => (
-                    <StyledAccordion
-                      key={member.id}
-                      expanded={expanded === member.id}
-                      onChange={handleChange(member.id)}
-                      condensed={isCondensed}
-                    >
-                      <StyledAccordionSummary 
-                        expandIcon={<ExpandMoreIcon />}
-                        condensed={isCondensed}
-                      >
-                        <Box sx={{ 
-                          display: 'flex', 
-                          width: '100%', 
-                          alignItems: 'center',
-                          gap: 2
-                        }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
-                            {/* <PositionChip 
-                              label={formatPosition(member.roundPositions.current)}
-                              position={member.roundPositions.current}
-                              size="small"
-                            /> */}
-                            <Typography 
-                              variant="subtitle1"
-                              sx={{ 
-                                fontWeight: 'bold',
-                                fontSize: isCondensed ? '0.7rem' : '0.8rem'
-                              }}
-                            >
-                              {member.name}
-                            </Typography>
-                          </Box>
-                          {/* <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              whiteSpace: 'nowrap',
-                              flex: 1,
-                              '@media (max-width: 650px)': {
-                                display: 'none'
-                              },
-                              '@media (max-height: 475px)': {
-                                display: 'none'
-                              }
-                            }}
-                          >
-                            Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
-                          </Typography> */}
-                          <Typography 
-                            variant="subtitle1"
-                            color={member.isCut ? 'error' : 'white'}
-                            sx={{ 
-                              fontWeight: 'bold',
-                              minWidth: 'fit-content',
-                              marginLeft: 'auto'
-                            }}
-                          >
-                            {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
-                          </Typography>
-                        </Box>
-                      </StyledAccordionSummary>
-                      <StyledAccordionDetails condensed={isCondensed}>
-                        <TableContainer 
-                          component={Paper} 
-                          variant="outlined"
-                          sx={{
-                            border: '1px solid #e0e0e0',
-                            borderRadius: '4px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <Table size={isCondensed ? "small" : "medium"}>
-                            <TableHead>
-                              <TableRow sx={{ backgroundColor: '#006747' }}>
-                                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {[...member.picks]
-                                .sort((a, b) => {
-                                  if (sortByScore) {
-                                    return a.total - b.total;
-                                  }
-                                  return a.group - b.group;
-                                })
-                                .map((golfer) => (
-                                  <TableRow 
-                                    key={golfer.id}
-                                    sx={{ 
-                                      backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
-                                      '&:nth-of-type(odd)': {
-                                        backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
-                                      },
-                                      transition: 'background-color 0.2s ease-in-out',
-                                      '&:hover': {
-                                        backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
-                                      },
-                                    }}
-                                  >
-                                    <TableCell>{golfer.group}</TableCell>
-                                    <TableCell component="th" scope="row">
-                                      <Typography sx={{ 
-                                        fontWeight: 500,
-                                        fontSize: isCondensed ? '0.7rem' : '0.8rem'
-                                      }}>
-                                        {golfer.name}
-                                      </Typography>
-                                    </TableCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round1}>
-                                      {formatScore(golfer.rounds.round1)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round2}>
-                                      {formatScore(golfer.rounds.round2)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round3}>
-                                      {formatScore(golfer.rounds.round3)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round4}>
-                                      {formatScore(golfer.rounds.round4)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.total}>
-                                      {formatScore(golfer.total)}
-                                    </ScoreCell>
-                                    <TableCell align="center">
-                                      {golfer.madeCut ? golfer.position : 'CUT'}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </StyledAccordionDetails>
-                    </StyledAccordion>
-                  ))}
-              </Box>
-            </ScrollableContent>
-          </LeaderboardContainer>
-        </>
-      ) : (
-        <PastResults />
-      )}
+              </ListItemIcon>
+              <ListItemText>
+                {sortByScore ? 'Sort by Group' : 'Sort by Score'}
+              </ListItemText>
+            </MenuItem>
+          </Menu>
+        </Box>
+        <Box sx={{ flex: 1, overflow: 'hidden' }}>
+          {activeTab === 0 && <Leaderboard sortByScore={sortByScore} />}
+          {activeTab === 1 && <PastResults />}
+          {activeTab === 2 && <PicksTable />}
+        </Box>
+      </LeaderboardContainer>
     </AppContainer>
   );
 }
