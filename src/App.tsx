@@ -26,6 +26,7 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import SortIcon from '@mui/icons-material/Sort';
 import { mockPoolMembers } from './data/mockData';
+import { pastResults } from './data/pastResults';
 
 const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, condensed }) => ({
   marginBottom: condensed ? theme.spacing(0.5) : theme.spacing(1),
@@ -121,6 +122,7 @@ const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, the
     padding: '0 1px',
     fontSize: '0.65rem',
   },
+  display: position === 0 ? 'none' : 'inline-flex', // Hide when position is 0
 }));
 
 const AppContainer = styled('div')({
@@ -172,14 +174,31 @@ const ScrollableContent = styled('div')({
   overflowY: 'auto',
   height: '100%',
   paddingRight: '2px',
+  paddingBottom: '2px',
   '&::-webkit-scrollbar': {
     width: '8px',
+    height: '8px',
   },
   '&::-webkit-scrollbar-track': {
     background: '#f1f1f1',
     borderRadius: '4px',
   },
   '&::-webkit-scrollbar-thumb': {
+    background: '#006747',
+    borderRadius: '4px',
+    '&:hover': {
+      background: '#005238',
+    },
+  },
+  '& .MuiTableContainer-root::-webkit-scrollbar': {
+    width: '8px',
+    height: '8px',
+  },
+  '& .MuiTableContainer-root::-webkit-scrollbar-track': {
+    background: '#f1f1f1',
+    borderRadius: '4px',
+  },
+  '& .MuiTableContainer-root::-webkit-scrollbar-thumb': {
     background: '#006747',
     borderRadius: '4px',
     '&:hover': {
@@ -210,37 +229,6 @@ const NavigationButtons = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-// Mock data for past results
-const pastResults = [
-  {
-    year: 2024,
-    top3: [
-      { name: "John Smith", score: -12, prize: "$500" },
-      { name: "Sarah Johnson", score: -10, prize: "$300" },
-      { name: "Mike Wilson", score: -8, prize: "$200" }
-    ],
-    participants: 25,
-  },
-  {
-    year: 2023,
-    top3: [
-      { name: "Sarah Johnson", score: -8, prize: "$450" },
-      { name: "David Brown", score: -6, prize: "$270" },
-      { name: "Emily Davis", score: -5, prize: "$180" }
-    ],
-    participants: 22,
-  },
-  {
-    year: 2022,
-    top3: [
-      { name: "Mike Wilson", score: -10, prize: "$400" },
-      { name: "Lisa Anderson", score: -8, prize: "$240" },
-      { name: "Tom Thompson", score: -7, prize: "$160" }
-    ],
-    participants: 20,
-  },
-];
-
 function formatScore(score: number | null): string {
   if (score === null) return '-';
   return score > 0 ? `+${score}` : score.toString();
@@ -264,20 +252,37 @@ function PastResults() {
             sx={{
               border: '1px solid #e0e0e0',
               borderRadius: '4px',
-              overflow: 'hidden',
+              overflow: 'auto',
+              '& .MuiTable-root': {
+                minWidth: 1200, // Ensures horizontal scroll on smaller screens
+              },
+              '&::-webkit-scrollbar': {
+                width: '8px',
+                height: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#006747',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: '#005238',
+                },
+              },
             }}
           >
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#006747' }}>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Year</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Winner</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Score</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Runner Up</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Score</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>3rd Place</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Score</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Participants</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 80 }}>Year</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Champion</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Co-Champion</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Runner Up</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Co-Runner Up</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Notes</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', minWidth: 400 }}>Story</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -301,32 +306,54 @@ function PastResults() {
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>🥇</Typography>
-                        <Typography>{result.top3[0].name}</Typography>
+                        <Typography>🏆</Typography>
+                        <Typography>{result.champion}</Typography>
                       </Box>
                     </TableCell>
-                    <ScoreCell align="center" score={result.top3[0].score}>
-                      {formatScore(result.top3[0].score)}
-                    </ScoreCell>
                     <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>🥈</Typography>
-                        <Typography>{result.top3[1].name}</Typography>
-                      </Box>
+                      {result.coChampion && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🏆</Typography>
+                          <Typography>{result.coChampion}</Typography>
+                        </Box>
+                      )}
                     </TableCell>
-                    <ScoreCell align="center" score={result.top3[1].score}>
-                      {formatScore(result.top3[1].score)}
-                    </ScoreCell>
                     <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>🥉</Typography>
-                        <Typography>{result.top3[2].name}</Typography>
-                      </Box>
+                      {result.runnerUp && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🥈</Typography>
+                          <Typography>{result.runnerUp}</Typography>
+                        </Box>
+                      )}
                     </TableCell>
-                    <ScoreCell align="center" score={result.top3[2].score}>
-                      {formatScore(result.top3[2].score)}
-                    </ScoreCell>
-                    <TableCell align="center">{result.participants}</TableCell>
+                    <TableCell>
+                      {result.coRunnerUp && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🥈</Typography>
+                          <Typography>{result.coRunnerUp}</Typography>
+                        </Box>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ 
+                        fontStyle: 'italic', 
+                        color: 'text.secondary',
+                        fontSize: '0.9rem',
+                        lineHeight: 1.4
+                      }}>
+                        {result.comments || ''}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ 
+                        fontStyle: 'italic', 
+                        color: 'text.secondary',
+                        fontSize: '0.9rem',
+                        lineHeight: 1.4
+                      }}>
+                        {result.description || ''}
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -442,11 +469,11 @@ function App() {
                           gap: 2
                         }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
-                            <PositionChip 
+                            {/* <PositionChip 
                               label={formatPosition(member.roundPositions.current)}
                               position={member.roundPositions.current}
                               size="small"
-                            />
+                            /> */}
                             <Typography 
                               variant="subtitle1"
                               sx={{ 
@@ -457,7 +484,7 @@ function App() {
                               {member.name}
                             </Typography>
                           </Box>
-                          <Typography 
+                          {/* <Typography 
                             variant="body2" 
                             sx={{ 
                               color: 'rgba(255, 255, 255, 0.8)',
@@ -472,7 +499,7 @@ function App() {
                             }}
                           >
                             Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
-                          </Typography>
+                          </Typography> */}
                           <Typography 
                             variant="subtitle1"
                             color={member.isCut ? 'error' : 'white'}

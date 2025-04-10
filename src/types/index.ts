@@ -26,4 +26,16 @@ export interface PoolMember {
     current: number | 'CUT';
   };
   isCut: boolean;
+}
+
+export interface MastersPlayer {
+  name: string;
+  position: number | 'CUT';
+  round1: number | null;
+  round2: number | null;
+  round3: number | null;
+  round4: number | null;
+  total: number;
+  fedexPoints: number;
+  prizeMoney: number;
 } 
