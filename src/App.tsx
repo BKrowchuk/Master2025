@@ -114,9 +114,14 @@ const ScoreCell = styled(TableCell)<{ score: number | null }>(({ score }) => ({
   color: score === null ? 'inherit' : 
          score > 0 ? '#2e7d32' : // Green for positive numbers
          score < 0 ? '#d32f2f' : // Red for negative numbers
-         'inherit',
+         'black', // Black for zero
   fontWeight: 500,
 }));
+
+const ThruCell = styled(TableCell)({
+  color: 'black',
+  fontWeight: 500,
+});
 
 const PositionChip = styled(Chip)<{ position: number | 'CUT' }>(({ position, theme }) => ({
   backgroundColor: position === 'CUT' ? '#d32f2f' : // Red for CUT
@@ -242,7 +247,7 @@ const NavigationButtons = styled(ToggleButtonGroup)(({ theme }) => ({
 
 function formatScore(score: number | null): string {
   if (score === null) return '-';
-  return score > 0 ? `+${score}` : score.toString();
+  return score.toString();
 }
 
 function formatPosition(position: number | 'CUT'): string {
@@ -658,9 +663,9 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                                   {golfer.name}
                                 </Typography>
                               </TableCell>
-                              <ScoreCell align="center" score={golfer.thru}>
+                              <ThruCell align="center">
                                 {golfer.thru}
-                              </ScoreCell>
+                              </ThruCell>
                               <ScoreCell align="center" score={golfer.rounds.round1}>
                                 {formatScore(golfer.rounds.round1)}
                               </ScoreCell>
