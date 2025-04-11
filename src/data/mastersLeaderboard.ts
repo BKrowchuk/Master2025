@@ -1,4 +1,5 @@
 import consoleData from './ConsoleData.json';
+import golfers from './golfers.json';
 
 export interface MastersPlayer {
   position: string;
@@ -14,6 +15,8 @@ export interface MastersPlayer {
   proj: number | null;
   starting: number | null;
   oddsToWin: string;
+  group?: number;
+  groupPosition?: number;
 }
 
 // Function to parse score string to number
@@ -46,6 +49,22 @@ function cleanPlayerName(name: string | undefined): string {
     .trim();
 }
 
+// Function to get player's group and group position
+function getPlayerGroupInfo(playerName: string): { group?: number; groupPosition?: number } {
+  const golfer = golfers.find(g => g.name === playerName);
+  if (!golfer) return {};
+
+  // Calculate group position by counting how many players are in the same group
+  const groupPosition = golfers
+    .filter(g => g.group === golfer.group)
+    .findIndex(g => g.name === playerName) + 1;
+
+  return {
+    group: golfer.group,
+    groupPosition
+  };
+}
+
 // Function to parse the console data and populate the leaderboard
 export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersPlayer[] {
   const leaderboard: MastersPlayer[] = [];
@@ -67,9 +86,12 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     if (row.length === 1 && row[0] === "") continue;
     if (!row[2]) continue; // Skip if player name is missing
     
+    const playerName = cleanPlayerName(row[2]);
+    const { group, groupPosition } = getPlayerGroupInfo(playerName);
+    
     const player: MastersPlayer = {
       position: row[0] || '',
-      playerName: cleanPlayerName(row[2]),
+      playerName,
       total: parseScore(row[3]),
       thru: row[4] || '',
       round: row[5] || '',
@@ -80,7 +102,9 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
       strokes: parseScore(row[10]),
       proj: parseScore(row[11]),
       starting: parseScore(row[12]),
-      oddsToWin: row[14] || ''
+      oddsToWin: row[14] || '',
+      group,
+      groupPosition
     };
     
     leaderboard.push(player);
@@ -105,6 +129,8 @@ export const mastersLeaderboard: MastersPlayer[] = [
     strokes: null,
     proj: null,
     starting: null,
-    oddsToWin: "WD"
+    oddsToWin: "WD",
+    group: 15,
+    groupPosition: 2
   }
 ]; 

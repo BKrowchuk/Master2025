@@ -28,6 +28,8 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 Prompt used for chat gpt: is there a way to extract the raw data from a website table?
 
 ### Console this works.
+https://www.pgatour.com/tournaments/2025/masters-tournament/R2025014/leaderboard
+
 ```
 [...document.querySelectorAll("table tr")].map(row =>
   [...row.querySelectorAll("td, th")].map(cell => cell.innerText)

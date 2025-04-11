@@ -41,6 +41,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import { mockPoolMembers } from './data/mockData';
 import { pastResults } from './data/pastResults';
 import { GolferScore } from './types';
+import { mastersLeaderboard, MastersPlayer } from './data/mastersLeaderboard';
 import React from 'react';
 
 const StyledAccordion = styled(Accordion)<{ condensed?: boolean }>(({ theme, condensed }) => ({
@@ -693,7 +694,7 @@ const PicksTable = () => {
   );
 };
 
-const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
+const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [isCondensed, setIsCondensed] = useState(true);
 
@@ -898,6 +899,116 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
   );
 };
 
+const MastersLeaderboard = () => {
+  return (
+    <ScrollableContent>
+      <Box sx={{ pt: 0, pb: 0 }}>
+        <TableContainer 
+          component={Paper} 
+          variant="outlined"
+          sx={{
+            border: '1px solid #e0e0e0',
+            borderRadius: '4px',
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+              height: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#006747',
+              borderRadius: '4px',
+              '&:hover': {
+                background: '#005238',
+              },
+            },
+            '&::-webkit-scrollbar-corner': {
+              background: '#f1f1f1',
+            },
+            '& .MuiTable-root': {
+              minWidth: 'max-content',
+            },
+            '& .MuiTableHead-root': {
+              position: 'sticky',
+              top: 0,
+              zIndex: 3,
+              backgroundColor: '#006747',
+            },
+            '& .MuiTableCell-stickyHeader': {
+              backgroundColor: '#006747',
+            },
+          }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group Pos</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Round</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {mastersLeaderboard.map((player: MastersPlayer) => (
+                <TableRow 
+                  key={player.playerName}
+                  sx={{ 
+                    '&:nth-of-type(odd)': {
+                      backgroundColor: '#fafafa',
+                    },
+                    transition: 'background-color 0.2s ease-in-out',
+                    '&:hover': {
+                      backgroundColor: '#f5f5f5',
+                    },
+                  }}
+                >
+                  <TableCell>{player.group || '-'}</TableCell>
+                  <TableCell>{player.groupPosition || '-'}</TableCell>
+                  <TableCell>{player.position}</TableCell>
+                  <TableCell component="th" scope="row">
+                    <Typography sx={{ fontWeight: 500 }}>
+                      {player.playerName}
+                    </Typography>
+                  </TableCell>
+                  <TotalCell align="center" score={player.total}>
+                    {formatScore(player.total)}
+                  </TotalCell>
+                  <ThruCell align="center">
+                    {player.thru}
+                  </ThruCell>
+                  <TableCell align="center">{player.round}</TableCell>
+                  <ScoreCell align="center" score={player.r1}>
+                    {formatScore(player.r1)}
+                  </ScoreCell>
+                  <ScoreCell align="center" score={player.r2}>
+                    {formatScore(player.r2)}
+                  </ScoreCell>
+                  <ScoreCell align="center" score={player.r3}>
+                    {formatScore(player.r3)}
+                  </ScoreCell>
+                  <ScoreCell align="center" score={player.r4}>
+                    {formatScore(player.r4)}
+                  </ScoreCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </ScrollableContent>
+  );
+};
+
 // Sort by score function
 function sortByScore(a: GolferScore, b: GolferScore): number {
   if (a.total === 'WD' && b.total === 'WD') return 0;
@@ -927,9 +1038,10 @@ function App() {
     <AppContainer>
       <LeaderboardContainer>
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
-          {activeTab === 0 && <Leaderboard sortByScore={sortByScore} />}
+          {activeTab === 0 && <PoolLeaderboard sortByScore={sortByScore} />}
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
+          {activeTab === 3 && <MastersLeaderboard />}
         </Box>
       </LeaderboardContainer>
       <NavigationBox>
@@ -966,6 +1078,10 @@ function App() {
           <ToggleButton value={2}>
             <SortByAlphaIcon sx={{ mr: 1 }} />
             Picks
+          </ToggleButton>
+          <ToggleButton value={3}>
+            <LeaderboardIcon sx={{ mr: 1 }} />
+            Masters
           </ToggleButton>
         </ToggleButtonGroup>
         <Divider orientation="vertical" flexItem />
