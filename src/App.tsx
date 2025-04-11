@@ -178,6 +178,7 @@ const AppContainer = styled('div')({
     padding: '10px',
     height: '100vh',
     overflow: 'hidden',
+    paddingBottom: '80px', // Add padding to account for nav bar
   },
 });
 
@@ -213,10 +214,10 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
     },
   },
   [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    height: '90%',
+    width: '95%',
+    height: 'calc(100% - 80px)', // Subtract nav bar height
     borderRadius: '8px',
-    top: '45%', // Shift up to account for nav bar
+    top: '44%', // Shift up to account for nav bar
   },
 }));
 
