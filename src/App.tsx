@@ -319,7 +319,7 @@ function PastResults() {
   const newFormatResults = pastResults.filter(result => result.year >= 2023);
 
   return (
-    <LeaderboardContainer>
+    <>
       <ScrollableContent>
         <Box sx={{ pt: 2, pb: 2 }}>
           {/* New Format Table (2023 onwards) */}
@@ -521,9 +521,9 @@ function PastResults() {
           </TableContainer>
         </Box>
       </ScrollableContent>
-    </LeaderboardContainer>
+    </>
   );
-}
+};
 
 const PicksTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
