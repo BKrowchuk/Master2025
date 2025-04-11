@@ -1058,7 +1058,7 @@ function App() {
           {activeTab === 0 && <PoolLeaderboard sortByScore={sortByScore} />}
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
-          {activeTab === 3 && <MastersLeaderboard groupByGroup={groupByGroup} />}
+          {/* {activeTab === 3 && <MastersLeaderboard groupByGroup={groupByGroup} />} */}
         </Box>
       </LeaderboardContainer>
       <NavigationBox>
@@ -1096,10 +1096,10 @@ function App() {
             <SortByAlphaIcon sx={{ mr: 1 }} />
             Picks
           </ToggleButton>
-          <ToggleButton value={3}>
+          {/* <ToggleButton value={3}>
             <LeaderboardIcon sx={{ mr: 1 }} />
             Masters
-          </ToggleButton>
+          </ToggleButton> */}
         </ToggleButtonGroup>
         <Divider orientation="vertical" flexItem />
         {activeTab === 0 && (
