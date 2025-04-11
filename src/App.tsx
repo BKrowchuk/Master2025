@@ -213,11 +213,17 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
       transform: 'translate(calc(-50% + 0.22vw), calc(-50% - 1vh))',
     },
   },
+  // [theme.breakpoints.down('sm')]: {
+  //   width: '95%',
+  //   height: 'calc(90% - 80px)', // Subtract nav bar height
+  //   borderRadius: '8px',
+  //   top: 'calc(50% - 70px)', // Center minus half of nav bar height
+  // },
   [theme.breakpoints.down('sm')]: {
     width: '95%',
-    height: 'calc(90% - 80px)', // Subtract nav bar height
+    height: 'calc(85% - 80px)', // Subtract nav bar height
     borderRadius: '8px',
-    top: 'calc(50% - 70px)', // Center minus half of nav bar height
+    top: 'calc(50% - 80px)', // Center minus half of nav bar height
   },
 }));
 
