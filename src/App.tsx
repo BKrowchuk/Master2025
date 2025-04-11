@@ -308,10 +308,113 @@ function formatPosition(position: number | 'CUT'): string {
 }
 
 function PastResults() {
+  // Split results into old and new format
+  const oldFormatResults = pastResults.filter(result => result.year < 2023);
+  const newFormatResults = pastResults.filter(result => result.year >= 2023);
+
   return (
     <LeaderboardContainer>
       <ScrollableContent>
         <Box sx={{ pt: 2, pb: 2 }}>
+          {/* New Format Table (2023 onwards) */}
+          <Typography variant="h6" sx={{ mb: 2, color: '#006747', fontWeight: 'bold' }}>
+            Recent History (2023 - Present)
+          </Typography>
+          <TableContainer 
+            component={Paper} 
+            variant="outlined"
+            sx={{
+              border: '1px solid #e0e0e0',
+              borderRadius: '4px',
+              overflow: 'auto',
+              mb: 4,
+              '& .MuiTable-root': {
+                minWidth: 1200, // Ensures horizontal scroll on smaller screens
+              },
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#006747' }}>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 80 }}>Year</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Champion</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Second Place</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Third Place</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', width: 150 }}>Notes</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white', minWidth: 400 }}>Story</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {newFormatResults.map((result) => (
+                  <TableRow 
+                    key={result.year}
+                    sx={{ 
+                      '&:nth-of-type(odd)': {
+                        backgroundColor: '#fafafa',
+                      },
+                      transition: 'background-color 0.2s ease-in-out',
+                      '&:hover': {
+                        backgroundColor: '#f5f5f5',
+                      },
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      <Typography sx={{ fontWeight: 500 }}>
+                        {result.year}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography>🏆</Typography>
+                        <Typography>{result.champion}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {result.secondPlace && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🥈</Typography>
+                          <Typography>{result.secondPlace}</Typography>
+                        </Box>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {result.thirdPlace && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🥉</Typography>
+                          <Typography>{result.thirdPlace}</Typography>
+                        </Box>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ 
+                        fontStyle: 'italic', 
+                        color: 'text.secondary',
+                        fontSize: '0.9rem',
+                        lineHeight: 1.4
+                      }}>
+                        {result.comments || ''}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography sx={{ 
+                        fontStyle: 'italic', 
+                        color: 'text.secondary',
+                        fontSize: '0.9rem',
+                        lineHeight: 1.4
+                      }}>
+                        {result.description || ''}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Old Format Table (pre-2023) */}
+          <Typography variant="h6" sx={{ mb: 2, color: '#006747', fontWeight: 'bold' }}>
+            Historical Results (2007 - 2022)
+          </Typography>
           <TableContainer 
             component={Paper} 
             variant="outlined"
@@ -320,22 +423,7 @@ function PastResults() {
               borderRadius: '4px',
               overflow: 'auto',
               '& .MuiTable-root': {
-                minWidth: 1200, // Ensures horizontal scroll on smaller screens
-              },
-              '&::-webkit-scrollbar': {
-                width: '8px',
-                height: '8px',
-              },
-              '&::-webkit-scrollbar-track': {
-                background: '#f1f1f1',
-                borderRadius: '4px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: '#006747',
-                borderRadius: '4px',
-                '&:hover': {
-                  background: '#005238',
-                },
+                minWidth: 1200,
               },
             }}
           >
@@ -352,7 +440,7 @@ function PastResults() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {pastResults.map((result) => (
+                {oldFormatResults.map((result) => (
                   <TableRow 
                     key={result.year}
                     sx={{ 
@@ -386,18 +474,18 @@ function PastResults() {
                     </TableCell>
                     <TableCell>
                       {result.runnerUp && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography>🥈</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography>🥈</Typography>
                           <Typography>{result.runnerUp}</Typography>
-                      </Box>
+                        </Box>
                       )}
                     </TableCell>
                     <TableCell>
                       {result.coRunnerUp && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Typography>🥈</Typography>
                           <Typography>{result.coRunnerUp}</Typography>
-                      </Box>
+                        </Box>
                       )}
                     </TableCell>
                     <TableCell>

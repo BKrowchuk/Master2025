@@ -4,6 +4,7 @@ export interface PastResult {
   coChampion?: string;
   runnerUp?: string;
   coRunnerUp?: string;
+  secondPlace?: string;
   thirdPlace?: string;
   comments?: string;
   description?: string;
@@ -11,12 +12,20 @@ export interface PastResult {
 
 export const pastResults: PastResult[] = [
   {
+    year: 2025,
+    champion: "?",
+    secondPlace: "",
+    thirdPlace: "",
+    comments: "",
+    description: ""
+  },
+  {
     year: 2024,
     champion: "Luther",
-    runnerUp: "John Paul George & Ringo",
+    secondPlace: "John Paul George & Ringo",
     thirdPlace: "Za German",
     comments: "3 way tie, tie breakers go to Luther",
-    description: "Rocky is the winner!!!"
+    description: "Luther is hunting for Goose, 3 wins in 4 years. He's early 2000s Tiger"
   },
   {
     year: 2023,
