@@ -215,9 +215,9 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     width: '95%',
-    height: 'calc(98% - 80px)', // Subtract nav bar height
+    height: 'calc(90% - 80px)', // Subtract nav bar height
     borderRadius: '8px',
-    top: '46.5%', // Shift up to account for nav bar
+    top: 'calc(50% - 70px)', // Center minus half of nav bar height
   },
 }));
 
