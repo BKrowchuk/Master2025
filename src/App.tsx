@@ -711,11 +711,10 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
       .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal);
   }, []);
 
-  // Pre-sort the golfers for each member
+  // Pre-sort the golfers for each member and identify best 8
   const sortedGolfers = React.useMemo(() => {
-    return sortedMembers.map(member => ({
-      ...member,
-      picks: [...member.picks].sort((a, b) => {
+    return sortedMembers.map(member => {
+      const sortedPicks = [...member.picks].sort((a, b) => {
         if (sortByScore) {
           // Handle null values and WD
           if (a.total === null && b.total === null) return 0;
@@ -727,28 +726,45 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
           return (a.total as number) - (b.total as number);
         }
         return a.group - b.group;
-      })
-    }));
+      });
+
+      // Get the best 8 players
+      const bestEight = sortedPicks
+        .filter(golfer => golfer.total !== null && golfer.total !== 'WD')
+        .sort((a, b) => (a.total as number) - (b.total as number))
+        .slice(0, 8);
+
+      // Add isBestEight flag to each pick
+      const picksWithBestEight = sortedPicks.map(pick => ({
+        ...pick,
+        isBestEight: bestEight.some(best => best.id === pick.id)
+      }));
+
+      return {
+        ...member,
+        picks: picksWithBestEight
+      };
+    });
   }, [sortByScore, sortedMembers]);
 
   return (
     <>
-            <ScrollableContent>
+      <ScrollableContent>
         <Box sx={{ pt: 0, pb: 0 }}>
           {sortedGolfers.map((member) => (
-                    <StyledAccordion
-                      key={member.id}
-                      expanded={expanded === member.id}
-                      onChange={handleChange(member.id)}
-                      condensed={isCondensed}
-                    >
-                      <StyledAccordionSummary 
-                        expandIcon={<ExpandMoreIcon />}
-                        condensed={isCondensed}
-                      >
-                        <Box sx={{ 
-                          display: 'flex', 
-                          width: '100%', 
+            <StyledAccordion
+              key={member.id}
+              expanded={expanded === member.id}
+              onChange={handleChange(member.id)}
+              condensed={isCondensed}
+            >
+              <StyledAccordionSummary 
+                expandIcon={<ExpandMoreIcon />}
+                condensed={isCondensed}
+              >
+                <Box sx={{ 
+                  display: 'flex', 
+                  width: '100%', 
                   alignItems: 'center',
                   gap: 2
                 }}>
@@ -791,87 +807,93 @@ const Leaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                   >
                     {member.isCut ? 'CUT' : formatScore(member.bestFourTotal)}
                   </Typography>
-                        </Box>
-                      </StyledAccordionSummary>
-                      <StyledAccordionDetails condensed={isCondensed}>
-                        <TableContainer 
-                          component={Paper} 
-                          variant="outlined"
-                          sx={{
-                            border: '1px solid #e0e0e0',
-                            borderRadius: '4px',
-                            overflow: 'hidden',
+                </Box>
+              </StyledAccordionSummary>
+              <StyledAccordionDetails condensed={isCondensed}>
+                <TableContainer 
+                  component={Paper} 
+                  variant="outlined"
+                  sx={{
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Table size={isCondensed ? "small" : "medium"}>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: '#006747' }}>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {member.picks.map((golfer) => (
+                        <TableRow 
+                          key={golfer.id}
+                          sx={{ 
+                            // Base background colors
+                            backgroundColor: !golfer.madeCut ? '#FFA587' : // Light red for cut players
+                                         golfer.isBestEight ? '#87E1FF' : // Light blue for top 8 scores
+                                         'inherit', // Default white/gray for regular rows
+                            // Alternate row colors (odd rows)
+                            '&:nth-of-type(odd)': {
+                              backgroundColor: !golfer.madeCut ? '#FFA587' : 
+                                           golfer.isBestEight ? '#87E1FF' : '#fafafa',
+                            },
+                            transition: 'background-color 0.2s ease-in-out',
+                            '&:hover': {
+                              backgroundColor: !golfer.madeCut ? '#FFA587' : 
+                                           golfer.isBestEight ? '#87E1FF' : '#f5f5f5',
+                            },
                           }}
                         >
-                          <Table size={isCondensed ? "small" : "medium"}>
-                            <TableHead>
-                              <TableRow sx={{ backgroundColor: '#006747' }}>
-                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R4</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Total</TableCell>
-                                <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Position</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                      {member.picks.map((golfer) => (
-                                  <TableRow 
-                                    key={golfer.id}
-                                    sx={{ 
-                                      backgroundColor: !golfer.madeCut ? '#fff3e0' : 'inherit',
-                                      '&:nth-of-type(odd)': {
-                                        backgroundColor: !golfer.madeCut ? '#fff3e0' : '#fafafa',
-                                      },
-                                      transition: 'background-color 0.2s ease-in-out',
-                                      '&:hover': {
-                                        backgroundColor: !golfer.madeCut ? '#ffe0b2' : '#f5f5f5',
-                                      },
-                                    }}
-                                  >
                           <TableCell>{golfer.group}</TableCell>
-                                    <TableCell component="th" scope="row">
+                          <TableCell component="th" scope="row">
                             <Typography sx={{ 
                               fontWeight: 500,
                               fontSize: isCondensed ? '0.7rem' : '0.8rem'
                             }}>
-                                        {golfer.name}
-                                      </Typography>
-                                    </TableCell>
+                              {golfer.name}
+                            </Typography>
+                          </TableCell>
                           <ThruCell align="center">
                             {golfer.thru}
                           </ThruCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round1}>
-                                      {formatScore(golfer.rounds.round1)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round2}>
-                                      {formatScore(golfer.rounds.round2)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round3}>
-                                      {formatScore(golfer.rounds.round3)}
-                                    </ScoreCell>
-                                    <ScoreCell align="center" score={golfer.rounds.round4}>
-                                      {formatScore(golfer.rounds.round4)}
-                                    </ScoreCell>
-                                    <TotalCell align="center" score={golfer.total}>
-                                      {formatScore(golfer.total)}
-                                    </TotalCell>
-                                    <TableCell align="center">
+                          <ScoreCell align="center" score={golfer.rounds.round1}>
+                            {formatScore(golfer.rounds.round1)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round2}>
+                            {formatScore(golfer.rounds.round2)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round3}>
+                            {formatScore(golfer.rounds.round3)}
+                          </ScoreCell>
+                          <ScoreCell align="center" score={golfer.rounds.round4}>
+                            {formatScore(golfer.rounds.round4)}
+                          </ScoreCell>
+                          <TotalCell align="center" score={golfer.total}>
+                            {formatScore(golfer.total)}
+                          </TotalCell>
+                          <TableCell align="center">
                             {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </StyledAccordionDetails>
-                    </StyledAccordion>
-                  ))}
-              </Box>
-            </ScrollableContent>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </StyledAccordionDetails>
+            </StyledAccordion>
+          ))}
+        </Box>
+      </ScrollableContent>
     </>
   );
 };

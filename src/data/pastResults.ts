@@ -30,7 +30,7 @@ export const pastResults: PastResult[] = [
   {
     year: 2023,
     champion: "Rocky",
-    runnerUp: "Jacko",
+    secondPlace: "Jacko",
     thirdPlace: "Mr 62",
     description: "Rocky finds his way back to the top after 16 years"
   },
