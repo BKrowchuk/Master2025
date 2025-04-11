@@ -36,7 +36,8 @@ function parseFedExPoints(points: string): number {
 }
 
 // Function to clean player name
-function cleanPlayerName(name: string): string {
+function cleanPlayerName(name: string | undefined): string {
+  if (!name) return '';
   // Remove newlines and extra spaces, and ensure (a) is properly formatted
   return name
     .replace(/\n/g, '')
@@ -62,14 +63,16 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     // Skip empty rows and headers
     if (row.length === 0 || row[0] === "POS") continue;
     
-    // Skip rows that are just empty strings
+    // Skip rows that are just empty strings or don't have enough data
     if (row.length === 1 && row[0] === "") continue;
+    if (!row[2]) continue; // Skip if player name is missing
+    
     const player: MastersPlayer = {
-      position: row[0],
+      position: row[0] || '',
       playerName: cleanPlayerName(row[2]),
       total: parseScore(row[3]),
-      thru: row[4],
-      round: row[5],
+      thru: row[4] || '',
+      round: row[5] || '',
       r1: parseScore(row[6]),
       r2: parseScore(row[7]),
       r3: parseScore(row[8]),
@@ -77,7 +80,7 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
       strokes: parseScore(row[10]),
       proj: parseScore(row[11]),
       starting: parseScore(row[12]),
-      oddsToWin: row[14]
+      oddsToWin: row[14] || ''
     };
     
     leaderboard.push(player);
