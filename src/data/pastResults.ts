@@ -4,14 +4,26 @@ export interface PastResult {
   coChampion?: string;
   runnerUp?: string;
   coRunnerUp?: string;
+  thirdPlace?: string;
   comments?: string;
   description?: string;
 }
 
 export const pastResults: PastResult[] = [
   {
+    year: 2024,
+    champion: "Luther",
+    runnerUp: "John Paul George & Ringo",
+    thirdPlace: "Za German",
+    comments: "3 way tie, tie breakers go to Luther",
+    description: "Rocky is the winner!!!"
+  },
+  {
     year: 2023,
-    champion: "?",
+    champion: "Rocky",
+    runnerUp: "Jacko",
+    thirdPlace: "Mr 62",
+    description: "Rocky finds his way back to the top after 16 years"
   },
   {
     year: 2022,
