@@ -203,13 +203,13 @@ const LeaderboardContainer = styled('div')(({ theme }) => ({
     '@media (max-aspect-ratio: 1868/1266)': {
       width: '91vw',
       height: 'calc(72vw * 0.678)', // 1266.626/1868.3149 ≈ 0.678
-      left: 'calc(50% + 0.12vw)',
+      // left: 'calc(50% + 0.12vw)',
       transform: 'translate(-50%, calc(-50% - 1vh))',
     },
     '@media (min-aspect-ratio: 1868/1266)': {
       width: 'calc(91vh / 0.678)', // 1266.626/1868.3149 ≈ 0.678
       height: '72vh',
-      left: 'calc(50% + 0.12vw)',
+      // left: 'calc(50% + 0.12vw)',
       transform: 'translate(calc(-50% + 0.22vw), calc(-50% - 1vh))',
     },
   },

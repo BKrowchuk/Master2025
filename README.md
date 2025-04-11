@@ -197,6 +197,8 @@ To update the tournament data:
 
 Feel free to submit issues and enhancement requests!
 
+## Search Commits
+Great command `git log -S'left'`
 ## License
 
 This project is licensed under the MIT License. 
