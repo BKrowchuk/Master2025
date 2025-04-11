@@ -899,7 +899,19 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
   );
 };
 
-const MastersLeaderboard = () => {
+const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
+  const sortedLeaderboard = [...mastersLeaderboard].sort((a, b) => {
+    if (groupByGroup) {
+      // First sort by group, then by group position
+      if (a.group !== b.group) {
+        return (a.group || 0) - (b.group || 0);
+      }
+      return (a.groupPosition || 0) - (b.groupPosition || 0);
+    }
+    // Default sort by position
+    return parseInt(a.position) - parseInt(b.position);
+  });
+
   return (
     <ScrollableContent>
       <Box sx={{ pt: 0, pb: 0 }}>
@@ -959,7 +971,7 @@ const MastersLeaderboard = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {mastersLeaderboard.map((player: MastersPlayer) => (
+              {sortedLeaderboard.map((player: MastersPlayer) => (
                 <TableRow 
                   key={player.playerName}
                   sx={{ 
@@ -1023,6 +1035,7 @@ function sortByScore(a: GolferScore, b: GolferScore): number {
 function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [sortByScore, setSortByScore] = useState(false);
+  const [groupByGroup, setGroupByGroup] = useState(false);
 
   const handleTabChange = (newValue: number) => {
     if (newValue !== null) {
@@ -1034,6 +1047,10 @@ function App() {
     setSortByScore(!sortByScore);
   };
 
+  const handleGroupToggle = () => {
+    setGroupByGroup(!groupByGroup);
+  };
+
   return (
     <AppContainer>
       <LeaderboardContainer>
@@ -1041,7 +1058,7 @@ function App() {
           {activeTab === 0 && <PoolLeaderboard sortByScore={sortByScore} />}
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
-          {activeTab === 3 && <MastersLeaderboard />}
+          {activeTab === 3 && <MastersLeaderboard groupByGroup={groupByGroup} />}
         </Box>
       </LeaderboardContainer>
       <NavigationBox>
@@ -1085,17 +1102,36 @@ function App() {
           </ToggleButton>
         </ToggleButtonGroup>
         <Divider orientation="vertical" flexItem />
-        <IconButton
-          onClick={handleSortToggle}
-          sx={{ 
-            color: '#006747',
-            '&:hover': {
-              backgroundColor: 'rgba(0, 103, 71, 0.1)',
-            }
-          }}
-        >
-          {sortByScore ? <NumbersIcon /> : <GroupIcon />}
-        </IconButton>
+        {activeTab === 0 && (
+          <Tooltip title={sortByScore ? "Sort by group instead of score" : "Sort by score instead of group"} placement="top">
+            <IconButton
+              onClick={handleSortToggle}
+              sx={{ 
+                color: '#006747',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                }
+              }}
+            >
+              {sortByScore ? <NumbersIcon /> : <GroupIcon />}
+            </IconButton>
+          </Tooltip>
+        )}
+        {activeTab === 3 && (
+          <Tooltip title={groupByGroup ? "Show players sorted by position" : "Group players by their group number"} placement="top">
+            <IconButton
+              onClick={handleGroupToggle}
+              sx={{ 
+                color: '#006747',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                }
+              }}
+            >
+              <GroupIcon />
+            </IconButton>
+          </Tooltip>
+        )}
       </NavigationBox>
     </AppContainer>
   );
