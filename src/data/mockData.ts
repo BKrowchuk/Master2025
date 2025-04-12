@@ -105,6 +105,7 @@ try {
 // Helper function to get best 8 players for a pool member
 function getBestEightPlayers(picks: GolferScore[]): GolferScore[] {
   return picks
+    .filter(golfer => golfer.madeCut) // Only include players who made the cut
     .sort((a, b) => {
       if (a.total === 'WD' && b.total === 'WD') return 0;
       if (a.total === 'WD') return 1;

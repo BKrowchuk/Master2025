@@ -743,7 +743,14 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
   // Pre-sort the members
   const sortedMembers = React.useMemo(() => {
     return mockPoolMembers
-      .sort((a, b) => (a.isCut ? 1 : 0) - (b.isCut ? 1 : 0) || a.bestFourTotal - b.bestFourTotal);
+      .sort((a, b) => {
+        // First sort by cut status - non-cut players come first
+        if (a.isCut !== b.isCut) {
+          return a.isCut ? 1 : -1;
+        }
+        // If both are cut or both are not cut, sort by total
+        return a.bestFourTotal - b.bestFourTotal;
+      });
   }, []);
 
   // Pre-sort the golfers for each member and identify best 8
@@ -751,7 +758,11 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
     return sortedMembers.map(member => {
       const sortedPicks = [...member.picks].sort((a, b) => {
         if (sortByScore) {
-          // Handle null values and WD
+          // First sort by cut status - non-cut players come first
+          if (a.madeCut !== b.madeCut) {
+            return a.madeCut ? -1 : 1;
+          }
+          // If both are cut or both are not cut, sort by total
           if (a.total === null && b.total === null) return 0;
           if (a.total === null) return 1;
           if (b.total === null) return -1;
@@ -763,9 +774,9 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
         return a.group - b.group;
       });
 
-      // Get the best 8 players
+      // Get the best 8 players who made the cut
       const bestEight = sortedPicks
-        .filter(golfer => golfer.total !== null && golfer.total !== 'WD')
+        .filter(golfer => golfer.madeCut && golfer.total !== null && golfer.total !== 'WD')
         .sort((a, b) => (a.total as number) - (b.total as number))
         .slice(0, 8);
 
