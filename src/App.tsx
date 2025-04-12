@@ -829,7 +829,8 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                       color: 'white',
                       fontSize: isCondensed ? '0.65rem' : '0.75rem',
                       opacity: 0.8,
-                      minWidth: 'fit-content'
+                      minWidth: 'fit-content',
+                      display: { xs: 'none', sm: 'block' }
                     }}
                   >
                     Round Positions: {
