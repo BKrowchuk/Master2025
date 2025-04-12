@@ -37,20 +37,53 @@ function cleanPlayerName(name: string | undefined): string {
     .trim();
 }
 
-// Function to get player's group and group position
-function getPlayerGroupInfo(playerName: string): { group?: number; groupPosition?: number } {
+// Function to get player's group
+function getPlayerGroup(playerName: string): number | undefined {
   const golfer = golfers.find(g => g.name === playerName);
-  if (!golfer) return {};
+  return golfer?.group;
+}
 
-  // Calculate group position by counting how many players are in the same group
-  const groupPosition = golfers
-    .filter(g => g.group === golfer.group)
-    .findIndex(g => g.name === playerName) + 1;
+// Function to calculate group positions for all players
+export function calculateGroupPositions(leaderboard: MastersPlayer[]): MastersPlayer[] {
+  // Group players by their group number
+  const groups = new Map<number, MastersPlayer[]>();
+  
+  leaderboard.forEach(player => {
+    const group = getPlayerGroup(player.playerName);
+    if (group !== undefined) {
+      if (!groups.has(group)) {
+        groups.set(group, []);
+      }
+      groups.get(group)!.push(player);
+    }
+  });
 
-  return {
-    group: golfer.group,
-    groupPosition
-  };
+  // Sort each group by total score
+  groups.forEach((groupPlayers, groupNumber) => {
+    const sortedGroup = [...groupPlayers].sort((a, b) => {
+      if (a.total === null && b.total === null) return 0;
+      if (a.total === null) return 1;
+      if (b.total === null) return -1;
+      if (a.total === 'WD' && b.total === 'WD') return 0;
+      if (a.total === 'WD') return 1;
+      if (b.total === 'WD') return -1;
+      return (a.total as number) - (b.total as number);
+    });
+
+    // Log the sorted group for debugging
+    // console.log(`Group ${groupNumber} Leaderboard:`, sortedGroup.map(p => ({
+    //   name: p.playerName,
+    //   total: p.total,
+    //   position: sortedGroup.findIndex(g => g.playerName === p.playerName) + 1
+    // })));
+
+    // Assign group positions
+    sortedGroup.forEach((player, index) => {
+      player.groupPosition = index + 1;
+    });
+  });
+
+  return leaderboard;
 }
 
 // Function to parse the console data and populate the leaderboard
@@ -75,7 +108,7 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
     if (!row[2]) continue; // Skip if player name is missing
     
     const playerName = cleanPlayerName(row[2]);
-    const { group, groupPosition } = getPlayerGroupInfo(playerName);
+    const group = getPlayerGroup(playerName);
     
     const player: MastersPlayer = {
       position: row[0] || '',
@@ -92,7 +125,7 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
       starting: parseScore(row[12]),
       oddsToWin: row[14] || '',
       group,
-      groupPosition
+      groupPosition: undefined
     };
     
     leaderboard.push(player);
@@ -102,12 +135,12 @@ export function populateLeaderboardFromConsoleData(consoleData: any[]): MastersP
 }
 
 // Initialize the leaderboard with the console data
-export const mastersLeaderboard: MastersPlayer[] = [
+const initialLeaderboard = [
   ...populateLeaderboardFromConsoleData(consoleData),
   {
     position: "WD",
     playerName: "Vijay Singh",
-    total: "WD",
+    total: "WD" as const,
     thru: "WD",
     round: "WD",
     r1: null,
@@ -121,4 +154,7 @@ export const mastersLeaderboard: MastersPlayer[] = [
     group: 15,
     groupPosition: 2
   }
-]; 
+];
+
+// Calculate group positions and export the final leaderboard
+export const mastersLeaderboard: MastersPlayer[] = calculateGroupPositions(initialLeaderboard); 
