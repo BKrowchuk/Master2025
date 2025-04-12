@@ -1280,7 +1280,7 @@ function App() {
                 <ListItemIcon>
                   <GroupIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>{groupByGroup ? "Sort by Position" : "Group by Number"}</ListItemText>
+                <ListItemText>{groupByGroup ? "Sort by Position" : "Group by Group Number"}</ListItemText>
               </MenuItem>
             )}
           </Menu>
