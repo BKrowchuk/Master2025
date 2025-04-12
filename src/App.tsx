@@ -966,6 +966,13 @@ const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
       if (a.group !== b.group) {
         return a.group - b.group;
       }
+      // Within the same group, sort by cut status first
+      const aIsCut = a.position === 'CUT' || a.total === 'WD';
+      const bIsCut = b.position === 'CUT' || b.total === 'WD';
+      if (aIsCut !== bIsCut) {
+        return aIsCut ? 1 : -1;
+      }
+      // If both are cut or both are not cut, sort by group position
       return (a.groupPosition || 0) - (b.groupPosition || 0);
     }
     // Default sort by position
