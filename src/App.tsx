@@ -311,17 +311,45 @@ function formatPosition(position: { position: number | 'CUT' | 'WD'; isTied: boo
   if (position.position === 'CUT') return 'CUT';
   if (position.position === 'WD') return 'WD';
   if (position.isTied) return `T${position.position}`;
-  const suffixes = ['th', 'st', 'nd', 'rd'];
-  const suffix = position.position <= 3 ? suffixes[position.position] : suffixes[0];
-  return `${position.position}${suffix}`;
+  
+  const num = position.position;
+  const lastDigit = num % 10;
+  const lastTwoDigits = num % 100;
+  
+  // Special cases for 11th, 12th, 13th
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${num}th`;
+  }
+  
+  // Regular cases
+  switch (lastDigit) {
+    case 1: return `${num}st`;
+    case 2: return `${num}nd`;
+    case 3: return `${num}rd`;
+    default: return `${num}th`;
+  }
 }
 
 function formatRoundPosition(position: { position: number | 'CUT'; isTied: boolean }): string {
   if (position.position === 'CUT') return 'CUT';
   if (position.isTied) return `T${position.position}`;
-  const suffixes = ['th', 'st', 'nd', 'rd'];
-  const suffix = position.position <= 3 ? suffixes[position.position] : suffixes[0];
-  return `${position.position}${suffix}`;
+  
+  const num = position.position;
+  const lastDigit = num % 10;
+  const lastTwoDigits = num % 100;
+  
+  // Special cases for 11th, 12th, 13th
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${num}th`;
+  }
+  
+  // Regular cases
+  switch (lastDigit) {
+    case 1: return `${num}st`;
+    case 2: return `${num}nd`;
+    case 3: return `${num}rd`;
+    default: return `${num}th`;
+  }
 }
 
 function PastResults() {

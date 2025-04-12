@@ -3,7 +3,6 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 
 
 ## TODO
-- add in round positions
 - fix full screen on phones + stack nav bar
 - make the desktop nav bar nicer
 
