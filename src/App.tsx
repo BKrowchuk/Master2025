@@ -974,48 +974,68 @@ const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedLeaderboard.map((player: MastersPlayer) => (
-                <TableRow 
-                  key={player.playerName}
-                  sx={{ 
-                    '&:nth-of-type(odd)': {
-                      backgroundColor: '#fafafa',
-                    },
-                    transition: 'background-color 0.2s ease-in-out',
-                    '&:hover': {
-                      backgroundColor: '#f5f5f5',
-                    },
-                  }}
-                >
-                  <TableCell>{player.group || '-'}</TableCell>
-                  <TableCell>{player.groupPosition || '-'}</TableCell>
-                  <TableCell>{player.position}</TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography sx={{ fontWeight: 500 }}>
-                      {player.playerName}
-                    </Typography>
-                  </TableCell>
-                  <TotalCell align="center" score={player.total}>
-                    {formatScore(player.total)}
-                  </TotalCell>
-                  <ThruCell align="center">
-                    {player.thru}
-                  </ThruCell>
-                  <TableCell align="center">{player.round}</TableCell>
-                  <ScoreCell align="center" score={player.r1}>
-                    {formatScore(player.r1)}
-                  </ScoreCell>
-                  <ScoreCell align="center" score={player.r2}>
-                    {formatScore(player.r2)}
-                  </ScoreCell>
-                  <ScoreCell align="center" score={player.r3}>
-                    {formatScore(player.r3)}
-                  </ScoreCell>
-                  <ScoreCell align="center" score={player.r4}>
-                    {formatScore(player.r4)}
-                  </ScoreCell>
-                </TableRow>
-              ))}
+              {sortedLeaderboard.map((player: MastersPlayer, index) => {
+                const showDivider = groupByGroup && 
+                  index > 0 && 
+                  player.group !== sortedLeaderboard[index - 1].group;
+
+                return (
+                  <React.Fragment key={player.playerName}>
+                    {showDivider && (
+                      <TableRow>
+                        <TableCell 
+                          colSpan={11} 
+                          sx={{ 
+                            padding: '4px',
+                            backgroundColor: '#f5f5f5',
+                            borderTop: '2px solid #006747',
+                            borderBottom: '2px solid #006747'
+                          }}
+                        />
+                      </TableRow>
+                    )}
+                    <TableRow 
+                      sx={{ 
+                        '&:nth-of-type(odd)': {
+                          backgroundColor: '#fafafa',
+                        },
+                        transition: 'background-color 0.2s ease-in-out',
+                        '&:hover': {
+                          backgroundColor: '#f5f5f5',
+                        },
+                      }}
+                    >
+                      <TableCell>{player.group || '-'}</TableCell>
+                      <TableCell>{player.groupPosition || '-'}</TableCell>
+                      <TableCell>{player.position}</TableCell>
+                      <TableCell component="th" scope="row">
+                        <Typography sx={{ fontWeight: 500 }}>
+                          {player.playerName}
+                        </Typography>
+                      </TableCell>
+                      <TotalCell align="center" score={player.total}>
+                        {formatScore(player.total)}
+                      </TotalCell>
+                      <ThruCell align="center">
+                        {player.thru}
+                      </ThruCell>
+                      <TableCell align="center">{player.round}</TableCell>
+                      <ScoreCell align="center" score={player.r1}>
+                        {formatScore(player.r1)}
+                      </ScoreCell>
+                      <ScoreCell align="center" score={player.r2}>
+                        {formatScore(player.r2)}
+                      </ScoreCell>
+                      <ScoreCell align="center" score={player.r3}>
+                        {formatScore(player.r3)}
+                      </ScoreCell>
+                      <ScoreCell align="center" score={player.r4}>
+                        {formatScore(player.r4)}
+                      </ScoreCell>
+                    </TableRow>
+                  </React.Fragment>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
