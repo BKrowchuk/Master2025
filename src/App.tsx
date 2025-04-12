@@ -140,15 +140,15 @@ const ThruCell = styled(TableCell)({
   fontWeight: 500,
 });
 
-const PositionChip = styled(Chip)<{ position: number | 'CUT' | 'WD' }>(({ position, theme }) => ({
-  backgroundColor: position === 'CUT' ? '#d32f2f' : // Red for CUT
-                  position === 'WD' ? '#999999' : // Gray for WD
-                  position === 1 ? '#FFD700' : // Gold
-                  position === 2 ? '#C0C0C0' : // Silver
-                  position === 3 ? '#CD7F32' : // Bronze
+const PositionChip = styled(Chip)<{ position: { position: number | 'CUT' | 'WD'; isTied: boolean } }>(({ position, theme }) => ({
+  backgroundColor: position.position === 'CUT' ? '#d32f2f' : // Red for CUT
+                  position.position === 'WD' ? '#999999' : // Gray for WD
+                  position.position === 1 ? '#FFD700' : // Gold
+                  position.position === 2 ? '#C0C0C0' : // Silver
+                  position.position === 3 ? '#CD7F32' : // Bronze
                   '#006747', // Masters green
-  color: position === 'CUT' || position === 'WD' ? 'white' :
-         position <= 3 ? '#000' : 'white',
+  color: position.position === 'CUT' || position.position === 'WD' ? 'white' :
+         position.position <= 3 ? '#000' : 'white',
   fontWeight: 'bold',
   width: '45px',
   height: '24px',
@@ -156,7 +156,7 @@ const PositionChip = styled(Chip)<{ position: number | 'CUT' | 'WD' }>(({ positi
     padding: '0 1px',
     fontSize: '0.65rem',
   },
-  display: position === 0 ? 'none' : 'inline-flex', // Hide when position is 0
+  display: position.position === 0 ? 'none' : 'inline-flex', // Hide when position is 0
 }));
 
 const AppContainer = styled('div')({
@@ -312,6 +312,11 @@ function formatPosition(position: number | 'CUT'): string {
   const suffixes = ['th', 'st', 'nd', 'rd'];
   const suffix = position <= 3 ? suffixes[position] : suffixes[0];
   return `${position}${suffix}`;
+}
+
+function formatRoundPosition(position: { position: number | 'CUT'; isTied: boolean }): string {
+  if (position.position === 'CUT') return 'CUT';
+  return position.isTied ? `T${position.position}` : position.position.toString();
 }
 
 function PastResults() {
@@ -771,7 +776,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
                     <PositionChip 
-                      label={formatPosition(member.roundPositions.current)}
+                      label={formatPosition(member.roundPositions.current.position)}
                       position={member.roundPositions.current}
                       size="small"
                     />
@@ -785,8 +790,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                       {member.name}
                     </Typography>
                   </Box>
-                  {/* TODO: Add round positions back in */}
-                  {/* <Typography 
+                  <Typography 
                     variant="subtitle2"
                     sx={{ 
                       color: 'white',
@@ -795,8 +799,16 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                       minWidth: 'fit-content'
                     }}
                   >
-                    Round Positions: {formatPosition(member.roundPositions.round1)} → {formatPosition(member.roundPositions.round2)} → {formatPosition(member.roundPositions.round3)} → {formatPosition(member.roundPositions.round4)}
-                  </Typography> */}
+                    Round Positions: {
+                      member.picks.some(p => p.rounds.round1 !== null) ? formatRoundPosition(member.roundPositions.round1) : ''
+                    }{
+                      member.picks.some(p => p.rounds.round2 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round2)}` : ''
+                    }{
+                      member.picks.some(p => p.rounds.round3 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round3)}` : ''
+                    }{
+                      member.picks.some(p => p.rounds.round4 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round4)}` : ''
+                    }
+                  </Typography>
                   <Typography 
                     variant="subtitle1"
                     color={member.isCut ? 'error' : 'white'}

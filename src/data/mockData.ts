@@ -133,29 +133,84 @@ function isPoolMemberCut(picks: GolferScore[]): boolean {
 }
 
 // Calculate positions for all pool members for a specific round
-// TODO: Add round positions back in
-function calculateRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): { [key: string]: number | 'CUT' } {
+function calculateRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[], roundKey: 'round1' | 'round2' | 'round3' | 'round4'): { [key: string]: { position: number | 'CUT'; isTied: boolean } } {
   // Filter out cut pool members
   const activePoolMembers = poolMembers.filter(member => !isPoolMemberCut(member.picks));
   
-  const roundScores = activePoolMembers.map(member => ({
-    id: member.id,
-    score: getBestEightPlayers(member.picks)
-      .map((golfer: GolferScore) => golfer.rounds[roundKey] || 0)
-      .reduce((sum: number, score: number) => sum + score, 0)
-  }));
+  const roundScores = activePoolMembers.map(member => {
+    // Get the best 8 players based on their cumulative scores up to this round
+    const bestEight = member.picks
+      .map(golfer => {
+        let cumulativeScore = 0;
+        if (roundKey === 'round1') {
+          cumulativeScore = golfer.rounds.round1 || 0;
+        } else if (roundKey === 'round2') {
+          cumulativeScore = (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0);
+        } else if (roundKey === 'round3') {
+          cumulativeScore = (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0);
+        } else if (roundKey === 'round4') {
+          cumulativeScore = (golfer.rounds.round1 || 0) + (golfer.rounds.round2 || 0) + (golfer.rounds.round3 || 0) + (golfer.rounds.round4 || 0);
+        }
+        return { golfer, cumulativeScore };
+      })
+      .filter(({ golfer }) => {
+        // Only include golfers who have completed the current round
+        if (roundKey === 'round1') return golfer.rounds.round1 !== null;
+        if (roundKey === 'round2') return golfer.rounds.round2 !== null;
+        if (roundKey === 'round3') return golfer.rounds.round3 !== null;
+        if (roundKey === 'round4') return golfer.rounds.round4 !== null;
+        return true;
+      })
+      .sort((a, b) => a.cumulativeScore - b.cumulativeScore)
+      .slice(0, 8);
+
+    // Calculate the total score for the best 8 players
+    const totalScore = bestEight.reduce((sum, { cumulativeScore }) => sum + cumulativeScore, 0);
+
+    return {
+      id: member.id,
+      score: totalScore
+    };
+  });
   
+  // Sort by total score (lower is better)
   roundScores.sort((a, b) => a.score - b.score);
   
-  const positions: { [key: string]: number | 'CUT' } = {};
+  const positions: { [key: string]: { position: number | 'CUT'; isTied: boolean } } = {};
+  
+  // Handle ties in positions
+  let currentPosition = 1;
+  let currentScore = roundScores[0]?.score;
+  let skipPositions = 0;
+  let isTied = false;
+  
+  // First pass: count how many people share each score
+  const scoreCounts = new Map<number, number>();
+  roundScores.forEach(score => {
+    scoreCounts.set(score.score, (scoreCounts.get(score.score) || 0) + 1);
+  });
+  
+  // Second pass: assign positions
   roundScores.forEach((score, index) => {
-    positions[score.id] = index + 1;
+    if (score.score === currentScore) {
+      // Same score as previous, share position
+      positions[score.id] = { position: currentPosition, isTied: scoreCounts.get(score.score)! > 1 };
+      skipPositions++;
+      isTied = true;
+    } else {
+      // New score, update position
+      currentPosition += skipPositions;
+      currentScore = score.score;
+      positions[score.id] = { position: currentPosition, isTied: scoreCounts.get(score.score)! > 1 };
+      skipPositions = 1;
+      isTied = false;
+    }
   });
   
   // Set position to 'CUT' for cut pool members
   poolMembers.forEach(member => {
     if (isPoolMemberCut(member.picks)) {
-      positions[member.id] = 'CUT';
+      positions[member.id] = { position: 'CUT', isTied: false };
     }
   });
   
@@ -209,14 +264,14 @@ function calculateCumulativePositions(poolMembers: { id: string; picks: GolferSc
 }
 
 // Calculate all round positions for a pool member
-function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[]): { [key: string]: { round1: number | 'CUT'; round2: number | 'CUT'; round3: number | 'CUT'; round4: number | 'CUT'; current: number | 'CUT' } } {
-  const positions: { [key: string]: { round1: number | 'CUT'; round2: number | 'CUT'; round3: number | 'CUT'; round4: number | 'CUT'; current: number | 'CUT' } } = {};
+function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScore[] }[]): { [key: string]: { round1: { position: number | 'CUT'; isTied: boolean }; round2: { position: number | 'CUT'; isTied: boolean }; round3: { position: number | 'CUT'; isTied: boolean }; round4: { position: number | 'CUT'; isTied: boolean }; current: { position: number | 'CUT'; isTied: boolean } } } {
+  const positions: { [key: string]: { round1: { position: number | 'CUT'; isTied: boolean }; round2: { position: number | 'CUT'; isTied: boolean }; round3: { position: number | 'CUT'; isTied: boolean }; round4: { position: number | 'CUT'; isTied: boolean }; current: { position: number | 'CUT'; isTied: boolean } } } = {};
   
   // Calculate positions for each round based on cumulative scores
-  const round1Positions = calculateCumulativePositions(poolMembers, 'round1');
-  const round2Positions = calculateCumulativePositions(poolMembers, 'round2');
-  const round3Positions = calculateCumulativePositions(poolMembers, 'round3');
-  const round4Positions = calculateCumulativePositions(poolMembers, 'round4');
+  const round1Positions = calculateRoundPositions(poolMembers, 'round1');
+  const round2Positions = calculateRoundPositions(poolMembers, 'round2');
+  const round3Positions = calculateRoundPositions(poolMembers, 'round3');
+  const round4Positions = calculateRoundPositions(poolMembers, 'round4');
   
   // Calculate current positions based on best 8 total scores
   const activePoolMembers = poolMembers.filter(member => !isPoolMemberCut(member.picks));
@@ -227,15 +282,30 @@ function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScor
   
   currentScores.sort((a, b) => a.score - b.score);
   
-  const currentPositions: { [key: string]: number | 'CUT' } = {};
+  const currentPositions: { [key: string]: { position: number | 'CUT'; isTied: boolean } } = {};
+  let currentPosition = 1;
+  let currentScore = currentScores[0]?.score;
+  let skipPositions = 0;
+  let isTied = false;
+  
   currentScores.forEach((score, index) => {
-    currentPositions[score.id] = index + 1;
+    if (score.score === currentScore) {
+      currentPositions[score.id] = { position: currentPosition, isTied: true };
+      skipPositions++;
+      isTied = true;
+    } else {
+      currentPosition += skipPositions;
+      currentScore = score.score;
+      currentPositions[score.id] = { position: currentPosition, isTied: false };
+      skipPositions = 1;
+      isTied = false;
+    }
   });
   
   // Set position to 'CUT' for cut pool members
   poolMembers.forEach(member => {
     if (isPoolMemberCut(member.picks)) {
-      currentPositions[member.id] = 'CUT';
+      currentPositions[member.id] = { position: 'CUT', isTied: false };
     }
   });
   
