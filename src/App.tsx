@@ -1224,17 +1224,22 @@ function App() {
           )}
         </Box>
         <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-          <IconButton
+          <Box
             onClick={handleClick}
             sx={{ 
-              color: '#006747',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+              cursor: 'pointer',
               '&:hover': {
                 backgroundColor: 'rgba(0, 103, 71, 0.1)',
               }
             }}
           >
-            <MenuIcon />
-          </IconButton>
+            <MenuIcon sx={{ color: '#006747' }} />
+          </Box>
           <Menu
             anchorEl={anchorEl}
             open={open}
