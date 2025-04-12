@@ -1,13 +1,9 @@
 # Masters Pool Leaderboard
-
 A real-time leaderboard application for tracking Masters Tournament pool results. Built with React, TypeScript, and Material-UI.
 
 
 ## TODO
-- based on the leaderboard show thru # but still total score is best 8 scores that arent cut MAYBE DONE
 ### Friday
-- history 2023 and 2024 
-  - make history section alot nicer
 - add in round positions
 - auto pull table data from pga tour website on job? and manually add a button to do it or something I can hide for myself? 
 - fix full screen on phones + stack nav bar
@@ -20,6 +16,10 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 - write emails
 ### Sunday
 - write emails
+
+### Next Year
+- history 2023 and 2024 
+  - make history section alot nicer
 
 ## How to get Leaderboard
 Prompt used for chat gpt: is there a way to extract the raw data from a website table?

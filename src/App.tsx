@@ -902,9 +902,12 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
 const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
   const sortedLeaderboard = [...mastersLeaderboard].sort((a, b) => {
     if (groupByGroup) {
-      // First sort by group, then by group position
+      // First sort by group, putting dash group at the bottom
+      if (a.group === undefined && b.group === undefined) return 0;
+      if (a.group === undefined) return 1;
+      if (b.group === undefined) return -1;
       if (a.group !== b.group) {
-        return (a.group || 0) - (b.group || 0);
+        return a.group - b.group;
       }
       return (a.groupPosition || 0) - (b.groupPosition || 0);
     }
@@ -1058,7 +1061,7 @@ function App() {
           {activeTab === 0 && <PoolLeaderboard sortByScore={sortByScore} />}
           {activeTab === 1 && <PastResults />}
           {activeTab === 2 && <PicksTable />}
-          {/* {activeTab === 3 && <MastersLeaderboard groupByGroup={groupByGroup} />} */}
+          {activeTab === 3 && <MastersLeaderboard groupByGroup={groupByGroup} />}
         </Box>
       </LeaderboardContainer>
       <NavigationBox>
@@ -1096,10 +1099,10 @@ function App() {
             <SortByAlphaIcon sx={{ mr: 1 }} />
             Picks
           </ToggleButton>
-          {/* <ToggleButton value={3}>
+          <ToggleButton value={3}>
             <LeaderboardIcon sx={{ mr: 1 }} />
             Masters
-          </ToggleButton> */}
+          </ToggleButton>
         </ToggleButtonGroup>
         <Divider orientation="vertical" flexItem />
         {activeTab === 0 && (
