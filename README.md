@@ -3,7 +3,6 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 
 
 ## TODO
-- fix full screen on phones + stack nav bar
 - make the desktop nav bar nicer
 
 - auto pull table data from pga tour website on job? and manually add a button to do it or something I can hide for myself? 
@@ -19,6 +18,7 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 - history 2023 and 2024 
   - make history section alot nicer
 - add filter to masters leaderboard and our leaderboard (or just a top filter for all on the navbar?)
+- make small screen scrolling better(but the nav bar at the same level as the conatiner that is behind and scrolling weirdly)
 
 ## How to get Leaderboard
 Prompt used for chat gpt: is there a way to extract the raw data from a website table?
