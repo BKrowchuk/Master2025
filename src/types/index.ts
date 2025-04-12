@@ -2,6 +2,7 @@ export interface GolferScore {
   id: string;
   name: string;
   group: number;
+  groupPosition?: number;
   rounds: {
     round1: number | null;
     round2: number | null;

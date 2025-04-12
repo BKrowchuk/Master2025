@@ -824,6 +824,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                     <TableHead>
                       <TableRow sx={{ backgroundColor: '#006747' }}>
                         <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group Pos</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
@@ -856,6 +857,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                           }}
                         >
                           <TableCell>{golfer.group}</TableCell>
+                          <TableCell>{golfer.groupPosition || '-'}</TableCell>
                           <TableCell component="th" scope="row">
                             <Typography sx={{ 
                               fontWeight: 500,

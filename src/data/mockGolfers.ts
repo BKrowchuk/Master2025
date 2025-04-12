@@ -4,7 +4,8 @@ import { GolferScore } from '../types';
 export const mockGolfers: GolferScore[] = mastersLeaderboard.map((player, index) => ({
   id: `golfer-${index + 1}`,
   name: player.playerName,
-  group: 1, // Default group since it's required by GolferScore interface
+  group: player.group || 1, // Default group since it's required by GolferScore interface
+  groupPosition: player.groupPosition,
   rounds: {
     round1: player.r1 ? Number(player.r1) : null,
     round2: player.r2 ? Number(player.r2) : null,
