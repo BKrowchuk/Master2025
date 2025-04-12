@@ -929,7 +929,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                             {formatScore(golfer.total)}
                           </TotalCell>
                           <TableCell align="center">
-                            {golfer.position === "WD" ? "WD" : (golfer.madeCut ? golfer.position : 'CUT')}
+                            {golfer.position === "WD" ? "WD" : (golfer.madeCut ? (golfer.isTied ? `T${golfer.position}` : golfer.position) : 'CUT')}
                           </TableCell>
                         </TableRow>
                       ))}

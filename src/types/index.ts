@@ -14,6 +14,7 @@ export interface GolferScore {
   madeCut: boolean;
   thru: string;
   round?: string | null;
+  isTied: boolean;
 }
 
 export interface PoolMember {
