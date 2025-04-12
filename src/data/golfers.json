@@ -326,5 +326,24 @@
   {
     "name": "Evan Beck (a)",
     "group": 15
-  }
+  },
+  {"name":"Matt McCarty","group":11},
+
+{"name":"Brian Campbell","group":13},
+{"name":"Maverick McNealy","group":3},
+{"name":"Chris Kirk","group":12},
+{"name":"Mike Weir","group":15},
+{"name":"Austin Eckroat","group":10},
+{"name":"Jhonattan Vegas","group":11},
+{"name":"Robert MacIntyre","group":4},
+
+{"name":"Laurie Canter","group":9},
+
+{"name":"Thriston Lawrence","group":12},
+{"name":"Noah Kent (a)","group":15},
+{"name":"Jose Luis Ballester Barrio (a)","group":15},
+{"name":"José María Olazábal","group":15},
+
+{"name":"Nick Dunlap","group":8}
+
 ] 
