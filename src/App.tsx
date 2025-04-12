@@ -915,6 +915,11 @@ const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
     return parseInt(a.position) - parseInt(b.position);
   });
 
+  // Helper function to determine if a player is cut
+  const isCut = (player: MastersPlayer) => {
+    return player.position === 'CUT' || player.total === 'WD';
+  };
+
   return (
     <ScrollableContent>
       <Box sx={{ pt: 0, pb: 0 }}>
@@ -978,6 +983,7 @@ const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
                 const showDivider = groupByGroup && 
                   index > 0 && 
                   player.group !== sortedLeaderboard[index - 1].group;
+                const cut = isCut(player);
 
                 return (
                   <React.Fragment key={player.playerName}>
@@ -996,12 +1002,13 @@ const MastersLeaderboard = ({ groupByGroup }: { groupByGroup: boolean }) => {
                     )}
                     <TableRow 
                       sx={{ 
+                        backgroundColor: cut ? '#FFA587' : 'inherit',
                         '&:nth-of-type(odd)': {
-                          backgroundColor: '#fafafa',
+                          backgroundColor: cut ? '#FFA587' : '#fafafa',
                         },
                         transition: 'background-color 0.2s ease-in-out',
                         '&:hover': {
-                          backgroundColor: '#f5f5f5',
+                          backgroundColor: cut ? '#FFA587' : '#f5f5f5',
                         },
                       }}
                     >
