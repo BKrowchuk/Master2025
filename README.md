@@ -3,21 +3,23 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 
 
 ## TODO
-### Friday
 - add in round positions
-- auto pull table data from pga tour website on job? and manually add a button to do it or something I can hide for myself? 
 - fix full screen on phones + stack nav bar
 - make the desktop nav bar nicer
-- write emails
+
+- auto pull table data from pga tour website on job? and manually add a button to do it or something I can hide for myself? 
+
 ### Saturday
-- formatting the same way the short masters leaderboard does (red lines) - also make the main lines white and red and green as well
 - write emails
+
 ### Sunday
+- formatting the same way the short masters leaderboard does (red lines) - also make the main lines white and red and green as well
 - write emails
 
 ### Next Year
 - history 2023 and 2024 
   - make history section alot nicer
+- add filter to masters leaderboard and our leaderboard (or just a top filter for all on the navbar?)
 
 ## How to get Leaderboard
 Prompt used for chat gpt: is there a way to extract the raw data from a website table?
