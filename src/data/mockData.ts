@@ -283,22 +283,29 @@ function calculateAllRoundPositions(poolMembers: { id: string; picks: GolferScor
   currentScores.sort((a, b) => a.score - b.score);
   
   const currentPositions: { [key: string]: { position: number | 'CUT'; isTied: boolean } } = {};
+  
+  // First pass: count how many people share each score
+  const scoreCounts = new Map<number, number>();
+  currentScores.forEach(score => {
+    scoreCounts.set(score.score, (scoreCounts.get(score.score) || 0) + 1);
+  });
+  
+  // Second pass: assign positions
   let currentPosition = 1;
   let currentScore = currentScores[0]?.score;
   let skipPositions = 0;
-  let isTied = false;
   
   currentScores.forEach((score, index) => {
     if (score.score === currentScore) {
-      currentPositions[score.id] = { position: currentPosition, isTied: true };
+      // Same score as previous, share position
+      currentPositions[score.id] = { position: currentPosition, isTied: scoreCounts.get(score.score)! > 1 };
       skipPositions++;
-      isTied = true;
     } else {
+      // New score, update position
       currentPosition += skipPositions;
       currentScore = score.score;
-      currentPositions[score.id] = { position: currentPosition, isTied: false };
+      currentPositions[score.id] = { position: currentPosition, isTied: scoreCounts.get(score.score)! > 1 };
       skipPositions = 1;
-      isTied = false;
     }
   });
   

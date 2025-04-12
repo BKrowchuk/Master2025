@@ -307,16 +307,21 @@ function formatScore(score: number | 'WD' | null): string {
   return score.toString();
 }
 
-function formatPosition(position: number | 'CUT'): string {
-  if (position === 'CUT') return 'CUT';
+function formatPosition(position: { position: number | 'CUT' | 'WD'; isTied: boolean }): string {
+  if (position.position === 'CUT') return 'CUT';
+  if (position.position === 'WD') return 'WD';
+  if (position.isTied) return `T${position.position}`;
   const suffixes = ['th', 'st', 'nd', 'rd'];
-  const suffix = position <= 3 ? suffixes[position] : suffixes[0];
-  return `${position}${suffix}`;
+  const suffix = position.position <= 3 ? suffixes[position.position] : suffixes[0];
+  return `${position.position}${suffix}`;
 }
 
 function formatRoundPosition(position: { position: number | 'CUT'; isTied: boolean }): string {
   if (position.position === 'CUT') return 'CUT';
-  return position.isTied ? `T${position.position}` : position.position.toString();
+  if (position.isTied) return `T${position.position}`;
+  const suffixes = ['th', 'st', 'nd', 'rd'];
+  const suffix = position.position <= 3 ? suffixes[position.position] : suffixes[0];
+  return `${position.position}${suffix}`;
 }
 
 function PastResults() {
@@ -776,7 +781,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '250px' }}>
                     <PositionChip 
-                      label={formatPosition(member.roundPositions.current.position)}
+                      label={formatPosition(member.roundPositions.current)}
                       position={member.roundPositions.current}
                       size="small"
                     />
