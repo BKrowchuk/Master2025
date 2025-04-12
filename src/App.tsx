@@ -1113,7 +1113,7 @@ function sortByScore(a: GolferScore, b: GolferScore): number {
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
-  const [sortByScore, setSortByScore] = useState(false);
+  const [sortByScore, setSortByScore] = useState(true);
   const [groupByGroup, setGroupByGroup] = useState(false);
 
   const handleTabChange = (newValue: number) => {
