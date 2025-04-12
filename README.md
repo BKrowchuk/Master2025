@@ -10,8 +10,7 @@ A real-time leaderboard application for tracking Masters Tournament pool results
 - make the desktop nav bar nicer
 - write emails
 ### Saturday
-- add group position to leaderboard cells to each player
-- formatting the same way the short masters leaderboard does (red lines) also make the main lines white and red and green as well
+- formatting the same way the short masters leaderboard does (red lines) - also make the main lines white and red and green as well
 - write emails
 ### Sunday
 - write emails
