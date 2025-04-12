@@ -26,18 +26,6 @@ function parseScore(score: string): number | null {
   return parseInt(score.replace("+", ""), 10);
 }
 
-// Function to parse prize money string
-function parsePrizeMoney(money: string): string {
-  if (!money || money === "$0") return "$0";
-  return money;
-}
-
-// Function to parse FedEx points
-function parseFedExPoints(points: string): number {
-  if (!points) return 0;
-  return parseFloat(points);
-}
-
 // Function to clean player name
 function cleanPlayerName(name: string | undefined): string {
   if (!name) return '';
