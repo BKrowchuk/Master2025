@@ -830,13 +830,13 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                     }}
                   >
                     Round Positions: {
-                      member.picks.some(p => p.rounds.round1 !== null) ? formatRoundPosition(member.roundPositions.round1) : ''
+                      member.picks.filter(p => p.madeCut && p.total !== 'WD').every(p => p.rounds.round1 !== null) ? formatRoundPosition(member.roundPositions.round1) : ''
                     }{
-                      member.picks.some(p => p.rounds.round2 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round2)}` : ''
+                      member.picks.filter(p => p.madeCut && p.total !== 'WD').every(p => p.rounds.round2 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round2)}` : ''
                     }{
-                      member.picks.some(p => p.rounds.round3 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round3)}` : ''
+                      member.picks.filter(p => p.madeCut && p.total !== 'WD').every(p => p.rounds.round3 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round3)}` : ''
                     }{
-                      member.picks.some(p => p.rounds.round4 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round4)}` : ''
+                      member.picks.filter(p => p.madeCut && p.total !== 'WD').every(p => p.rounds.round4 !== null) ? ` → ${formatRoundPosition(member.roundPositions.round4)}` : ''
                     }
                   </Typography>
                   <Typography 
