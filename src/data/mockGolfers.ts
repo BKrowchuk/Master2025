@@ -15,5 +15,6 @@ export const mockGolfers: GolferScore[] = mastersLeaderboard.map((player, index)
   total: typeof player.total === 'string' ? "WD" : (typeof player.total === 'number' ? player.total : null),
   position: typeof player.total === 'string' && player.total === "WD" ? "WD" : (player.position === 'CUT' ? 'CUT' : Number(player.position.replace('T', ''))),
   madeCut: player.position !== 'CUT' && !(typeof player.total === 'string' && player.total === "WD"),
-  thru: player.thru || '-'
+  thru: player.thru || '-',
+  round: player.round || null
 })); 

@@ -13,6 +13,7 @@ export interface GolferScore {
   position: number | 'WD' | 'CUT';
   madeCut: boolean;
   thru: string;
+  round?: string | null;
 }
 
 export interface PoolMember {

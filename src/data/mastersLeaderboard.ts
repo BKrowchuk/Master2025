@@ -6,7 +6,7 @@ export interface MastersPlayer {
   playerName: string;
   total: number | null | 'WD';
   thru: string;
-  round: string;
+  round?: string | null;
   r1: number | null;
   r2: number | null;
   r3: number | null;

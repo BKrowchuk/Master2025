@@ -827,6 +827,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                         <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Group Pos</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Player</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Thru</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>Round</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R1</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R2</TableCell>
                         <TableCell align="center" sx={{ fontWeight: 'bold', color: 'white' }}>R3</TableCell>
@@ -869,6 +870,7 @@ const PoolLeaderboard = ({ sortByScore }: { sortByScore: boolean }) => {
                           <ThruCell align="center">
                             {golfer.thru}
                           </ThruCell>
+                          <TableCell align="center">{golfer.round || '-'}</TableCell>
                           <ScoreCell align="center" score={golfer.rounds.round1}>
                             {formatScore(golfer.rounds.round1)}
                           </ScoreCell>
