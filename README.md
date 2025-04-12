@@ -10,9 +10,6 @@ A real-time leaderboard application for tracking Masters Tournament pool results
   - make history section alot nicer
 - add in round positions
 - auto pull table data from pga tour website on job? and manually add a button to do it or something I can hide for myself? 
-- make it clear on what the buttons do for sorting and stuff
-- highlight rows that are used to calculate top 8
-- hide/show buttons depending on tab (filer and group buttons)
 - fix full screen on phones + stack nav bar
 - make the desktop nav bar nicer
 - write emails
