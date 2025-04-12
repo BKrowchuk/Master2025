@@ -286,18 +286,14 @@ const NavigationBox = styled(Box)(({ theme }) => ({
     bottom: 0,
     left: 0,
     borderRadius: 0,
-    padding: '8px 16px',
+    padding: '4px 8px',
     justifyContent: 'center',
     backgroundColor: 'white',
     boxShadow: '0 -2px 4px rgba(0, 0, 0, 0.1)',
-    height: '60px',
+    height: '50px',
     '& .MuiToggleButtonGroup-root': {
-      width: '100%',
-      justifyContent: 'center',
-    },
-    '& .MuiToggleButton-root': {
-      flex: 1,
-    },
+      display: 'none'
+    }
   },
 }));
 
@@ -1116,19 +1112,32 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [sortByScore, setSortByScore] = useState(true);
   const [groupByGroup, setGroupByGroup] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleTabChange = (newValue: number) => {
     if (newValue !== null) {
       setActiveTab(newValue);
+      handleClose();
     }
   };
 
   const handleSortToggle = () => {
     setSortByScore(!sortByScore);
+    handleClose();
   };
 
   const handleGroupToggle = () => {
     setGroupByGroup(!groupByGroup);
+    handleClose();
   };
 
   return (
@@ -1142,76 +1151,140 @@ function App() {
         </Box>
       </LeaderboardContainer>
       <NavigationBox>
-        <ToggleButtonGroup
-          value={activeTab}
-          exclusive
-          onChange={(_, newValue) => handleTabChange(newValue)}
-          size="small"
-          sx={{
-            '& .MuiToggleButton-root': {
-              color: '#006747',
-              padding: '4px 8px',
-              '&.Mui-selected': {
-                backgroundColor: '#006747',
-                color: 'white',
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1 }}>
+          <ToggleButtonGroup
+            value={activeTab}
+            exclusive
+            onChange={(_, newValue) => handleTabChange(newValue)}
+            size="small"
+            sx={{
+              '& .MuiToggleButton-root': {
+                color: '#006747',
+                padding: '4px 8px',
+                '&.Mui-selected': {
+                  backgroundColor: '#006747',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#005238',
+                  },
+                },
                 '&:hover': {
-                  backgroundColor: '#005238',
+                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
                 },
               },
+            }}
+          >
+            <ToggleButton value={0}>
+              <LeaderboardIcon sx={{ mr: 1 }} />
+              Leaderboard
+            </ToggleButton>
+            <ToggleButton value={1}>
+              <HistoryIcon sx={{ mr: 1 }} />
+              History
+            </ToggleButton>
+            <ToggleButton value={2}>
+              <SortByAlphaIcon sx={{ mr: 1 }} />
+              Picks
+            </ToggleButton>
+            <ToggleButton value={3}>
+              <LeaderboardIcon sx={{ mr: 1 }} />
+              Masters
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Divider orientation="vertical" flexItem />
+          {activeTab === 0 && (
+            <Tooltip title={sortByScore ? "Sort by group instead of score" : "Sort by score instead of group"} placement="top">
+              <IconButton
+                onClick={handleSortToggle}
+                sx={{ 
+                  color: '#006747',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                  }
+                }}
+              >
+                {sortByScore ? <NumbersIcon /> : <GroupIcon />}
+              </IconButton>
+            </Tooltip>
+          )}
+          {activeTab === 3 && (
+            <Tooltip title={groupByGroup ? "Show players sorted by position" : "Group players by their group number"} placement="top">
+              <IconButton
+                onClick={handleGroupToggle}
+                sx={{ 
+                  color: '#006747',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 103, 71, 0.1)',
+                  }
+                }}
+              >
+                <GroupIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+        <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+          <IconButton
+            onClick={handleClick}
+            sx={{ 
+              color: '#006747',
               '&:hover': {
                 backgroundColor: 'rgba(0, 103, 71, 0.1)',
-              },
-            },
-          }}
-        >
-          <ToggleButton value={0}>
-            <LeaderboardIcon sx={{ mr: 1 }} />
-            Leaderboard
-          </ToggleButton>
-          <ToggleButton value={1}>
-            <HistoryIcon sx={{ mr: 1 }} />
-            History
-          </ToggleButton>
-          <ToggleButton value={2}>
-            <SortByAlphaIcon sx={{ mr: 1 }} />
-            Picks
-          </ToggleButton>
-          <ToggleButton value={3}>
-            <LeaderboardIcon sx={{ mr: 1 }} />
-            Masters
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <Divider orientation="vertical" flexItem />
-        {activeTab === 0 && (
-          <Tooltip title={sortByScore ? "Sort by group instead of score" : "Sort by score instead of group"} placement="top">
-            <IconButton
-              onClick={handleSortToggle}
-              sx={{ 
-                color: '#006747',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
-                }
-              }}
-            >
-              {sortByScore ? <NumbersIcon /> : <GroupIcon />}
-            </IconButton>
-          </Tooltip>
-        )}
-        {activeTab === 3 && (
-          <Tooltip title={groupByGroup ? "Show players sorted by position" : "Group players by their group number"} placement="top">
-            <IconButton
-              onClick={handleGroupToggle}
-              sx={{ 
-                color: '#006747',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 103, 71, 0.1)',
-                }
-              }}
-            >
-              <GroupIcon />
-            </IconButton>
-          </Tooltip>
-        )}
+              }
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={() => handleTabChange(0)} selected={activeTab === 0}>
+              <ListItemIcon>
+                <LeaderboardIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Leaderboard</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleTabChange(1)} selected={activeTab === 1}>
+              <ListItemIcon>
+                <HistoryIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>History</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleTabChange(2)} selected={activeTab === 2}>
+              <ListItemIcon>
+                <SortByAlphaIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Picks</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleTabChange(3)} selected={activeTab === 3}>
+              <ListItemIcon>
+                <LeaderboardIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Masters</ListItemText>
+            </MenuItem>
+            {activeTab === 0 && (
+              <MenuItem onClick={handleSortToggle}>
+                <ListItemIcon>
+                  {sortByScore ? <NumbersIcon fontSize="small" /> : <GroupIcon fontSize="small" />}
+                </ListItemIcon>
+                <ListItemText>{sortByScore ? "Sort by Group" : "Sort by Score"}</ListItemText>
+              </MenuItem>
+            )}
+            {activeTab === 3 && (
+              <MenuItem onClick={handleGroupToggle}>
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>{groupByGroup ? "Sort by Position" : "Group by Number"}</ListItemText>
+              </MenuItem>
+            )}
+          </Menu>
+        </Box>
       </NavigationBox>
     </AppContainer>
   );
